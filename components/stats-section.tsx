@@ -2,6 +2,7 @@
 
 import { useGame } from "@/lib/game-context"
 import { useEffect } from "react"
+import Image from "next/image"
 
 interface Stat {
   label: string
@@ -65,9 +66,14 @@ export function StatsSection() {
 
           <h3 className="text-accent text-sm tracking-wider mb-6">// CHARACTER INFO</h3>
 
-          {/* Avatar Placeholder */}
-          <div className="w-24 h-24 mx-auto mb-6 border-2 border-accent/50 bg-secondary flex items-center justify-center">
-            <span className="text-foreground/30 text-xs">Avatar</span>
+          {/* Avatar - UPGRADED */}
+          <div className="w-24 h-24 mx-auto mb-6 border-2 border-accent/50 bg-secondary relative overflow-hidden group/rounded-full">
+            <Image 
+              src="/images/Potrait-1.jpeg" // Make sure this matches your file name!
+              alt="Character Avatar"
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-500"
+            />
           </div>
 
           {/* Stats Grid */}

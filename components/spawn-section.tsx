@@ -31,7 +31,7 @@ export function SpawnSection() {
         style={{
           backgroundImage: `
             linear-gradient(to right, #5F51C2 1px, transparent 1px),
-            linear-gradient(to bottom, #5F51C2 1px, transparent 1px)
+            linear-gradient(to bottom, #6a5ec5ff 1px, transparent 1px)
           `,
           backgroundSize: "60px 60px",
         }}
@@ -57,7 +57,7 @@ export function SpawnSection() {
         {/* Main Title - improved typography */}
         <div className="mb-12">
           <p className="text-accent text-sm tracking-[0.5em] mb-6 animate-pulse font-medium">WELCOME TO</p>
-          <h1 className="text-7xl md:text-9xl text-foreground mb-6 tracking-wider font-heading">GoStark</h1>
+          <h1 className="text-7xl md:text-9xl text-foreground mb-6 tracking-wider font-heading">Muhsin P</h1>
           <div className="flex items-center justify-center gap-6">
             <div className="h-px w-20 bg-accent/50" />
             <p className="text-foreground/80 text-xl tracking-[0.3em]">GAME DEVELOPER</p>
