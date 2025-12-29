@@ -14,39 +14,39 @@ interface Milestone {
 const milestones: Milestone[] = [
   {
     id: "m1",
-    year: "----",
-    title: "[ First Milestone ]",
-    description: "Add your first major milestone here. When did your journey begin?",
-    type: "personal",
-  },
-  {
-    id: "m2",
-    year: "----",
-    title: "[ Education / Learning ]",
-    description: "Describe your learning journey, courses, or education.",
+    year: "2025",
+    title: "Stride Makethon",
+    description: "It started as a simple product dev journey",
     type: "education",
   },
   {
-    id: "m3",
-    year: "----",
-    title: "[ First Project ]",
-    description: "Your first significant project or creation.",
+    id: "m2",
+    year: "2025",
+    title: "Lullaby Down Below",
+    description: "Simple Game Devolopment and my first almost completed game dev journey",
     type: "achievement",
   },
-  {
-    id: "m4",
-    year: "----",
-    title: "[ Career Start ]",
-    description: "When you started working professionally.",
-    type: "work",
-  },
-  {
-    id: "m5",
-    year: "----",
-    title: "[ Current Chapter ]",
-    description: "Where you are now and what you're working on.",
-    type: "work",
-  },
+  // {
+  //   id: "m3",
+  //   year: "----",
+  //   title: "[ First Project ]",
+  //   description: "Your first significant project or creation.",
+  //   type: "achievement",
+  // },
+  // {
+  //   id: "m4",
+  //   year: "----",
+  //   title: "[ Career Start ]",
+  //   description: "When you started working professionally.",
+  //   type: "work",
+  // },
+  // {
+  //   id: "m5",
+  //   year: "----",
+  //   title: "[ Current Chapter ]",
+  //   description: "Where you are now and what you're working on.",
+  //   type: "work",
+  // },
 ]
 
 const typeIcons = {

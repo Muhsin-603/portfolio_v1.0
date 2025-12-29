@@ -11,17 +11,17 @@ interface Stat {
 
 const stats: Stat[] = [
   { label: "CLASS", value: "Game Developer", description: "Primary specialization" },
-  { label: "LEVEL", value: "---", description: "Years of experience" },
-  { label: "GUILD", value: "---", description: "Current team/company" },
-  { label: "REALM", value: "---", description: "Location" },
+  { label: "LEVEL", value: ".5", description: "Years of experience" },
+  { label: "GUILD", value: "No Company", description: "Current team/company" },
+  { label: "REALM", value: "College of Engineering Vadakara", description: "Location" },
 ]
 
 const skills = [
-  { name: "Unity", level: 0, maxLevel: 100 },
-  { name: "Unreal Engine", level: 0, maxLevel: 100 },
-  { name: "C#", level: 0, maxLevel: 100 },
-  { name: "C++", level: 0, maxLevel: 100 },
-  { name: "JavaScript", level: 0, maxLevel: 100 },
+  { name: "Unity", level: 5, maxLevel: 100 },
+  { name: "Unreal Engine", level: 1, maxLevel: 100 },
+  { name: "C#", level: 2, maxLevel: 100 },
+  { name: "C++", level: 1, maxLevel: 100 },
+  { name: "JavaScript", level: 1, maxLevel: 100 },
   { name: "3D Modeling", level: 0, maxLevel: 100 },
 ]
 
@@ -30,6 +30,7 @@ const traits = [
   { name: "Creativity", icon: "◆" },
   { name: "Team Player", icon: "◆" },
   { name: "Quick Learner", icon: "◆" },
+  { name: "Over Thinker", icon: "◆" },
 ]
 
 export function StatsSection() {
@@ -88,8 +89,11 @@ export function StatsSection() {
           <div className="mt-6 pt-4 border-t border-accent/20">
             <h4 className="text-accent text-xs tracking-wider mb-2">// BACKSTORY</h4>
             <p className="text-foreground/60 text-sm leading-relaxed">
-              [ Your story goes here. Write about your journey into game development, what inspires you, and what drives
-              your passion for creating games. ]
+               I started out curious more than confident, the kind of person who pulled things apart just to see how they worked.
+               Code, stories, designs—none of them were goals at first, just places to hide and explore. 
+              I learned by breaking things, overthinking them, fixing them late at night, and then doing it all again the next day a little better. Sometimes I moved fast, sometimes I stalled, but I never stopped building. 
+              Somewhere between unfinished projects and small wins, I realized I wasn’t chasing perfection—I was shaping myself. Not loud, not flashy, just steady. 
+              Still learning. Still becoming. 
             </p>
           </div>
         </div>
@@ -148,7 +152,7 @@ export function StatsSection() {
             </div>
 
             <div className="grid grid-cols-3 gap-3 mt-2">
-              {["VS Code", "Git", "Blender", "Figma", "Photoshop", "---"].map((tool, i) => (
+              {["VS Code", "Git", "Blender", "Figma", "Photoshop", "Unity", "Unreal", "Godot", "Blender"].map((tool, i) => (
                 <div
                   key={i}
                   className="aspect-square bg-secondary border border-accent/20 flex items-center justify-center text-foreground/60 text-xs text-center p-2 hover:border-accent/50 transition-colors cursor-default"
