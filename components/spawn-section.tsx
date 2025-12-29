@@ -2,6 +2,7 @@
 
 import { useGame } from "@/lib/game-context"
 import { useEffect, useState } from "react"
+import Image from "next/image"
 
 export function SpawnSection() {
   const { state, visitArea, incrementClick, discoverLore } = useGame()
@@ -64,25 +65,29 @@ export function SpawnSection() {
           </div>
         </div>
 
-        {/* Character Frame Placeholder - improved styling */}
-        <div className="relative mx-auto w-56 h-56 mb-12">
+        {/* Character Frame - UPDATED */}
+        <div className="relative mx-auto w-48 h-48 mb-8">
+          {/* Decorative Frame Elements (Keep these!) */}
           <div className="absolute inset-0 border-2 border-accent/30 rotate-45 transform scale-75" />
-          <div className="absolute inset-6 border border-accent/50" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <button
-              onClick={handleLoreClick}
-              className="w-40 h-40 bg-secondary border-2 border-accent/50 flex items-center justify-center hover:border-accent hover:scale-105 transition-all duration-500 hover-glow cursor-pointer"
-            >
-              <span className="text-foreground/40 text-xs text-center px-4 leading-relaxed">
-                [ Click to discover lore ]
-              </span>
-            </button>
+          <div className="absolute inset-4 border border-accent/50 z-20" />
+
+          {/* YOUR IMAGE GOES HERE */}
+          <div className="absolute inset-0 flex items-center justify-center z-10 overflow-hidden">
+            <div className="w-32 h-32 relative">
+              <Image
+                src="/images/Potrait-1.jpeg"
+                alt="Drac - Game Developer"
+                fill
+                className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+              />
+            </div>
           </div>
-          {/* Corner Accents */}
-          <div className="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-accent" />
-          <div className="absolute -top-3 -right-3 w-6 h-6 border-t-2 border-r-2 border-accent" />
-          <div className="absolute -bottom-3 -left-3 w-6 h-6 border-b-2 border-l-2 border-accent" />
-          <div className="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-accent" />
+
+          {/* Corner Accents (Keep these too!) */}
+          <div className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-accent" />
+          <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-accent" />
+          <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-accent" />
+          <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-accent" />
         </div>
 
         {/* Tagline - improved readability */}
