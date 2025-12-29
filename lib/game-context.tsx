@@ -29,6 +29,9 @@ export interface GameState {
   visitedAreas: string[]
   puzzlesSolved: string[]
   gameStarted: boolean
+  clickCount: number
+  timeSpent: number
+  secretsFound: string[]
 }
 
 const initialAchievements: Achievement[] = [
@@ -81,6 +84,54 @@ const initialAchievements: Achievement[] = [
     icon: "🎮",
   },
   {
+    id: "speed_runner",
+    title: "Speed Runner",
+    description: "Visit all areas in under 60 seconds",
+    points: 40,
+    unlocked: false,
+    icon: "⚡",
+  },
+  {
+    id: "curious_one",
+    title: "Curious One",
+    description: "Click on 50 interactive elements",
+    points: 25,
+    unlocked: false,
+    icon: "🔍",
+  },
+  {
+    id: "lore_master",
+    title: "Lore Master",
+    description: "Discover all lore fragments",
+    points: 75,
+    unlocked: false,
+    icon: "📚",
+  },
+  {
+    id: "puzzle_solver",
+    title: "All Puzzles Complete",
+    description: "Solve all available puzzles",
+    points: 60,
+    unlocked: false,
+    icon: "🏆",
+  },
+  {
+    id: "secret_finder",
+    title: "Secret Finder",
+    description: "Discover a hidden secret",
+    points: 35,
+    unlocked: false,
+    icon: "🔮",
+  },
+  {
+    id: "dedicated",
+    title: "Dedicated Explorer",
+    description: "Spend 5 minutes exploring",
+    points: 30,
+    unlocked: false,
+    icon: "⏰",
+  },
+  {
     id: "completionist",
     title: "Completionist",
     description: "Unlock all other achievements",
@@ -126,6 +177,20 @@ const initialLoreFragments: LoreFragment[] = [
     discovered: false,
     location: "map",
   },
+  {
+    id: "lore_6",
+    title: "The Journey",
+    content: "Every game shipped is a battle won. Every bug fixed, a lesson learned.",
+    discovered: false,
+    location: "journey",
+  },
+  {
+    id: "lore_7",
+    title: "The Philosophy",
+    content: "Code is poetry. Games are symphonies. Players are the audience that makes it real.",
+    discovered: false,
+    location: "spawn",
+  },
 ]
 
 const initialState: GameState = {
@@ -138,6 +203,9 @@ const initialState: GameState = {
   visitedAreas: [],
   puzzlesSolved: [],
   gameStarted: false,
+  clickCount: 0,
+  timeSpent: 0,
+  secretsFound: [],
 }
 
 type GameAction =
@@ -149,6 +217,9 @@ type GameAction =
   | { type: "ADD_EXPERIENCE"; amount: number }
   | { type: "LOAD_STATE"; state: GameState }
   | { type: "RESET_GAME" }
+  | { type: "INCREMENT_CLICK" }
+  | { type: "UPDATE_TIME"; time: number }
+  | { type: "FIND_SECRET"; secretId: string }
 
 function calculateLevel(experience: number): number {
   return Math.floor(experience / 100) + 1
@@ -161,8 +232,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         playerName: action.playerName,
         gameStarted: true,
+        timeSpent: Date.now(),
       }
-      // Auto-unlock first spawn achievement
       const achievements = newState.achievements.map((a) => (a.id === "first_spawn" ? { ...a, unlocked: true } : a))
       const points = achievements.find((a) => a.id === "first_spawn")?.points || 0
       return {
@@ -178,18 +249,77 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.visitedAreas.includes(action.area)) return state
       const visitedAreas = [...state.visitedAreas, action.area]
       let achievements = [...state.achievements]
-      let addedPoints = 5 // Base points for visiting
+      let addedPoints = 5
 
-      // Check explorer achievement
-      if (visitedAreas.length >= 4) {
+      if (visitedAreas.length >= 5) {
         achievements = achievements.map((a) => (a.id === "explorer" && !a.unlocked ? { ...a, unlocked: true } : a))
         const explorerAchievement = achievements.find((a) => a.id === "explorer")
-        if (explorerAchievement?.unlocked) addedPoints += explorerAchievement.points
+        if (explorerAchievement?.unlocked && !state.achievements.find((a) => a.id === "explorer")?.unlocked) {
+          addedPoints += explorerAchievement.points
+        }
+      }
+
+      if (visitedAreas.length >= 5 && state.timeSpent > 0) {
+        const elapsed = (Date.now() - state.timeSpent) / 1000
+        if (elapsed < 60) {
+          achievements = achievements.map((a) =>
+            a.id === "speed_runner" && !a.unlocked ? { ...a, unlocked: true } : a,
+          )
+          const speedAchievement = achievements.find((a) => a.id === "speed_runner")
+          if (speedAchievement?.unlocked && !state.achievements.find((a) => a.id === "speed_runner")?.unlocked) {
+            addedPoints += speedAchievement.points
+          }
+        }
       }
 
       return {
         ...state,
         visitedAreas,
+        achievements,
+        totalPoints: state.totalPoints + addedPoints,
+        experience: state.experience + addedPoints,
+        level: calculateLevel(state.experience + addedPoints),
+      }
+    }
+
+    case "INCREMENT_CLICK": {
+      const newClickCount = state.clickCount + 1
+      let achievements = [...state.achievements]
+      let addedPoints = 0
+
+      if (newClickCount >= 50) {
+        achievements = achievements.map((a) => (a.id === "curious_one" && !a.unlocked ? { ...a, unlocked: true } : a))
+        const curiousAchievement = achievements.find((a) => a.id === "curious_one")
+        if (curiousAchievement?.unlocked && !state.achievements.find((a) => a.id === "curious_one")?.unlocked) {
+          addedPoints += curiousAchievement.points
+        }
+      }
+
+      return {
+        ...state,
+        clickCount: newClickCount,
+        achievements,
+        totalPoints: state.totalPoints + addedPoints,
+        experience: state.experience + addedPoints,
+        level: calculateLevel(state.experience + addedPoints),
+      }
+    }
+
+    case "FIND_SECRET": {
+      if (state.secretsFound.includes(action.secretId)) return state
+      const secretsFound = [...state.secretsFound, action.secretId]
+      let achievements = [...state.achievements]
+      let addedPoints = 15
+
+      achievements = achievements.map((a) => (a.id === "secret_finder" && !a.unlocked ? { ...a, unlocked: true } : a))
+      const secretAchievement = achievements.find((a) => a.id === "secret_finder")
+      if (secretAchievement?.unlocked && !state.achievements.find((a) => a.id === "secret_finder")?.unlocked) {
+        addedPoints += secretAchievement.points
+      }
+
+      return {
+        ...state,
+        secretsFound,
         achievements,
         totalPoints: state.totalPoints + addedPoints,
         experience: state.experience + addedPoints,
@@ -203,7 +333,6 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
       const achievements = state.achievements.map((a) => (a.id === action.id ? { ...a, unlocked: true } : a))
 
-      // Check completionist
       const unlockedCount = achievements.filter((a) => a.unlocked && a.id !== "completionist").length
       if (unlockedCount === achievements.length - 1) {
         const finalAchievements = achievements.map((a) => (a.id === "completionist" ? { ...a, unlocked: true } : a))
@@ -235,11 +364,20 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       let achievements = [...state.achievements]
       let addedPoints = 10
 
-      // Check lore hunter achievement
       if (discoveredCount >= 3) {
         achievements = achievements.map((a) => (a.id === "lore_hunter" && !a.unlocked ? { ...a, unlocked: true } : a))
         const loreAchievement = achievements.find((a) => a.id === "lore_hunter")
-        if (loreAchievement?.unlocked) addedPoints += loreAchievement.points
+        if (loreAchievement?.unlocked && !state.achievements.find((a) => a.id === "lore_hunter")?.unlocked) {
+          addedPoints += loreAchievement.points
+        }
+      }
+
+      if (discoveredCount === loreFragments.length) {
+        achievements = achievements.map((a) => (a.id === "lore_master" && !a.unlocked ? { ...a, unlocked: true } : a))
+        const loreMasterAchievement = achievements.find((a) => a.id === "lore_master")
+        if (loreMasterAchievement?.unlocked && !state.achievements.find((a) => a.id === "lore_master")?.unlocked) {
+          addedPoints += loreMasterAchievement.points
+        }
       }
 
       return {
@@ -264,6 +402,14 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         if (puzzleAchievement?.unlocked) addedPoints += puzzleAchievement.points
       }
 
+      if (puzzlesSolved.length >= 3) {
+        achievements = achievements.map((a) => (a.id === "puzzle_solver" && !a.unlocked ? { ...a, unlocked: true } : a))
+        const allPuzzlesAchievement = achievements.find((a) => a.id === "puzzle_solver")
+        if (allPuzzlesAchievement?.unlocked && !state.achievements.find((a) => a.id === "puzzle_solver")?.unlocked) {
+          addedPoints += allPuzzlesAchievement.points
+        }
+      }
+
       return {
         ...state,
         puzzlesSolved,
@@ -285,7 +431,10 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return action.state
 
     case "RESET_GAME":
-      return initialState
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("portfolio-game-state")
+      }
+      return { ...initialState }
 
     default:
       return state
@@ -301,6 +450,8 @@ interface GameContextType {
   solvePuzzle: (id: string) => void
   addExperience: (amount: number) => void
   resetGame: () => void
+  incrementClick: () => void
+  findSecret: (secretId: string) => void
 }
 
 const GameContext = createContext<GameContextType | null>(null)
@@ -308,7 +459,6 @@ const GameContext = createContext<GameContextType | null>(null)
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(gameReducer, initialState)
 
-  // Load saved state
   useEffect(() => {
     const saved = localStorage.getItem("portfolio-game-state")
     if (saved) {
@@ -321,12 +471,24 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Save state on changes
   useEffect(() => {
     if (state.gameStarted) {
       localStorage.setItem("portfolio-game-state", JSON.stringify(state))
     }
   }, [state])
+
+  useEffect(() => {
+    if (!state.gameStarted) return
+
+    const interval = setInterval(() => {
+      const elapsed = (Date.now() - state.timeSpent) / 1000
+      if (elapsed >= 300 && !state.achievements.find((a) => a.id === "dedicated")?.unlocked) {
+        dispatch({ type: "UNLOCK_ACHIEVEMENT", id: "dedicated" })
+      }
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [state.gameStarted, state.timeSpent, state.achievements])
 
   const value: GameContextType = {
     state,
@@ -336,6 +498,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
     discoverLore: (id) => dispatch({ type: "DISCOVER_LORE", id }),
     solvePuzzle: (id) => dispatch({ type: "SOLVE_PUZZLE", id }),
     addExperience: (amount) => dispatch({ type: "ADD_EXPERIENCE", amount }),
+    incrementClick: () => dispatch({ type: "INCREMENT_CLICK" }),
+    findSecret: (secretId) => dispatch({ type: "FIND_SECRET", secretId }),
     resetGame: () => {
       localStorage.removeItem("portfolio-game-state")
       dispatch({ type: "RESET_GAME" })

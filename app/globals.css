@@ -11,7 +11,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Custom color palette for gaming portfolio */
+  /* Improved color palette for better contrast and visibility */
   --background: #8a3333;
   --foreground: #efefef;
   --card: #100d0d;
@@ -22,14 +22,14 @@
   --primary-foreground: #efefef;
   --secondary: #100d0d;
   --secondary-foreground: #efefef;
-  --muted: #100d0d;
-  --muted-foreground: #efefef;
+  --muted: #1a1515;
+  --muted-foreground: #c4c4c4;
   --accent: #5f51c2;
   --accent-foreground: #efefef;
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --destructive: #dc2626;
+  --destructive-foreground: #efefef;
   --border: #5f51c2;
-  --input: #100d0d;
+  --input: #1a1515;
   --ring: #5f51c2;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -84,7 +84,8 @@
 
 @theme inline {
   --font-display: "Jokerman", cursive;
-  --font-sans: "Jokerman", cursive;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-heading: "Jokerman", cursive;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -128,6 +129,56 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Smooth scrolling and better base styles */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #100d0d;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #5f51c2;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #7a6fd4;
+  }
+}
+
+/* Interactive hover effects like reference site */
+@layer utilities {
+  .hover-lift {
+    @apply transition-all duration-500 ease-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 30px rgba(95, 81, 194, 0.3);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #efefef 0%, #5f51c2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
