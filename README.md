@@ -33,5 +33,5 @@ Each project includes source files, documentation, and previews where applicable
 ---
 
 ## 📫 Contact
-- LinkedIn: YOUR_LINK_HERE  
-- Portfolio Website: YOUR_SITE_HERE
+- LinkedIn: https://www.linkedin.com/in/muhsin-p-603p?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
+- Portfolio Website: https://v0-portfolio-603.vercel.app/
