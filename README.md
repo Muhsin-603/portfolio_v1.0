@@ -1,30 +1,37 @@
-# Portfolio Design
+Muhsin
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+### Game Developer | UI/UX Designer | Creative Technologist
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/muhsin-ps-projects/v0-portfolio-design)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/gPq3Hogtsuh)
+This repository contains my **personal portfolio**, showcasing selected projects, experiments, and design work in game development, interface design, and creative programming.
 
-## Overview
+The portfolio reflects my focus on building interactive experiences that balance technical clarity, visual quality, and thoughtful system design.
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+---
 
-## Deployment
+## 🧑‍💻 About
+- Engineering student with a strong interest in game development and UI/UX design  
+- Comfortable working across both logic-heavy systems and visual design workflows  
+- Enjoys rapid prototyping, iteration, and improving usability through design thinking  
 
-Your project is live at:
+---
 
-**[https://vercel.com/muhsin-ps-projects/v0-portfolio-design](https://vercel.com/muhsin-ps-projects/v0-portfolio-design)**
+## 🛠️ Skills & Tools
+**Languages:** C, C#, Java, GDScript  
+**Game Engines:** Unity, Godot  
+**Design:** Figma, UI Systems, Prototyping  
+**Tools:** Git, VS Code, Cursor  
 
-## Build your app
+---
 
-Continue building your app on:
+## 📂 Portfolio Contents
+- 🎮 Game prototypes and mechanics experiments  
+- 🎨 UI/UX design projects and visual systems  
+- 🧪 Technical explorations and learning projects  
 
-**[https://v0.app/chat/gPq3Hogtsuh](https://v0.app/chat/gPq3Hogtsuh)**
+Each project includes source files, documentation, and previews where applicable.
 
-## How It Works
+---
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+## 📫 Contact
+- LinkedIn: YOUR_LINK_HERE  
+- Portfolio Website: YOUR_SITE_HERE
