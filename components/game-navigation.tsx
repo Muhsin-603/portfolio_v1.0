@@ -5,6 +5,7 @@ import { useGame } from "@/lib/game-context"
 interface GameNavigationProps {
   currentSection: string
   onNavigate: (section: string) => void
+  isHudHidden: boolean
 }
 
 const navigationItems = [
@@ -15,13 +16,15 @@ const navigationItems = [
   { id: "puzzle", label: "secrets", shortLabel: "PUZZLE" },
 ]
 
-export function GameNavigation({ currentSection, onNavigate }: GameNavigationProps) {
+export function GameNavigation({ currentSection, onNavigate, isHudHidden }: GameNavigationProps) {
   const { state, resetGame } = useGame()
 
   if (!state.gameStarted) return null
 
   return (
-    <nav className="fixed bottom-0 md:top-16 md:bottom-auto left-0 right-0 z-40 px-4 py-2 bg-secondary/90 md:bg-secondary/80 border-t md:border-t-0 md:border-b border-accent/20 backdrop-blur-sm shadow-lg md:shadow-none">
+    <nav className={`fixed bottom-0 md:bottom-auto left-0 right-0 z-40 px-4 py-2 bg-secondary/90 md:bg-secondary/80 border-t md:border-t-0 md:border-b border-accent/20 backdrop-blur-sm shadow-lg md:shadow-none transition-all duration-300 ${
+      isHudHidden ? "md:top-0" : "md:top-20"
+    }`}>
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <button onClick={() => onNavigate("spawn")} className="hidden md:flex items-center gap-2 group">
           <div className="text-foreground text-xl tracking-wider group-hover:text-accent transition-colors">

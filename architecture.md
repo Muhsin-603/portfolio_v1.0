@@ -16,7 +16,8 @@ The project is a gamified developer portfolio designed as a single-player web-ba
 * **Core Libraries**:
   * Radix UI primitives for accessible layout controls
   * Lucide React for consistent iconography
-  * React hooks (`useReducer`, `useEffect`, `useState`, `useContext`) for state and DOM handling
+  * Lenis / `lenis/react` for global, momentum-based smooth scrolling
+  * React hooks (`useReducer`, `useEffect`, `useState`, `useContext`, `useMemo`, `useCallback`) for state and DOM handling
   * Local Storage for client-side persistence
 
 ---
@@ -24,18 +25,19 @@ The project is a gamified developer portfolio designed as a single-player web-ba
 ## 3. Directory Layout
 Below is the workspace file structure:
 * `app/`: Next.js pages and configurations.
-  * `app/layout.tsx`: Wraps the application inside the global state provider.
-  * `app/page.tsx`: Entry component that renders individual rooms based on navigation.
-  * `app/globals.css`: Tailwind configuration and custom utility classes.
+  * `app/layout.tsx`: Wraps the application inside the global state provider and the smooth scroll provider.
+  * `app/page.tsx`: Entry page rendering the single-scroll room sections, tracking active sections, and managing HUD scroll transitions.
+  * `app/globals.css`: Tailwind configuration, custom utility classes, and Lenis scroll overrides.
 * `lib/`: Base state, utility helpers, and configurations.
-  * `lib/game-context.tsx`: Houses the state definitions, initial data, reducer actions, and state provider.
+  * `lib/game-context.tsx`: Houses the state definitions, initial data, reducer actions, and memoized state provider.
   * `lib/utils.ts`: Small utility file containing Tailwind-merge configuration.
 * `components/`: Modular React components.
   * **Core Game Elements**:
     * `game-start.tsx`: Interactive character name prompt and initial screen.
-    * `game-hud.tsx`: Persistent HUD displaying XP, Levels, Points, and Achievements.
-    * `game-navigation.tsx`: Controller for transitioning between rooms.
+    * `game-hud.tsx`: Persistent HUD displaying XP, Levels, Points, and Achievements (slides out of view when scrolling down).
+    * `game-navigation.tsx`: Sticky navigation bar that locks to the top of the viewport when the HUD is hidden.
     * `notification-toast.tsx`: Toast triggers displaying unlocked achievements and lore discoveries.
+    * `smooth-scroll-provider.tsx`: Context wrapper that initializes the Lenis scrolling engine globally.
   * **Room Views**:
     * `spawn-section.tsx`: The starting screen containing developer basics and portrait.
     * `stats-section.tsx`: Displays developer backstory, skills progress bar, and equipment list.
@@ -50,7 +52,7 @@ Below is the workspace file structure:
 
 ## 4. State Management (`lib/game-context.tsx`)
 
-The global game state is managed via a single `useReducer` inside `GameProvider`.
+The global game state is managed via a single `useReducer` inside `GameProvider`. All reducer callback actions (like `visitArea`, `discoverLore`, etc.) are wrapped in `useCallback` and the state object is wrapped in `useMemo` to ensure that context consumers do not trigger unnecessary renders unless the underlying state changes.
 
 ### GameState Schema
 The game state stores:
@@ -118,3 +120,28 @@ function calculateLevel(experience: number): number {
 ### World Map (`components/world-map.tsx`)
 * Tracks: Exploration status of the whole app.
 * Interactive elements: Clickable node icons representing different rooms, floating question marks for map lore, and small hidden question marks in the corners representing hidden secrets.
+* Performance: Redundant `overflow-y-auto` removed from its container to prevent nested scrollbars.
+
+---
+
+## 6. Scroll, HUD & Performance Architecture
+
+To deliver a premium, lag-free user experience, the application implements a high-performance scrolling and rendering design:
+
+### Single-Scroll Layout
+* Instead of swapping rooms, the sections (`SpawnSection`, `StatsSection`, `InventorySection`, `JourneySection`, and `PuzzleRoom`) are stacked vertically on a single, continuous page.
+* An `IntersectionObserver` tracks the active section as the user scrolls, updating the active tab in the navigation bar and triggering room visit actions only when they are visible.
+
+### Scroll-to-Hide HUD & Sticky Navigation Lock
+* A custom scroll hook tracks scroll direction and hides the persistent Game HUD (`translate-y-full`) when scrolling down.
+* When the HUD slides away, the navigation header transitions from `md:top-20` to `md:top-0`, locking to the very top of the screen to optimize content viewport space.
+* When the World Map modal is opened, body scroll is programmatically locked (`document.body.style.overflow = "hidden"`) to prevent back-page movement.
+
+### Lenis Smooth Scrolling
+* The site uses the Lenis scrolling engine (`SmoothScrollProvider`) for inertia-based momentum scrolling.
+* Native CSS `scroll-behavior: smooth` is overridden to `scroll-behavior: auto` in `globals.css` to prevent conflict between the native browser calculations and Lenis interpolation.
+* Programmatic link navigation is handled via `lenis.scrollTo()` with a `-80px` offset, ensuring transitions bypass default browser scrolling stuttering.
+
+### Rendering Performance Optimizations
+* **Context Memoization**: The root `GameContext` value is memoized using `useMemo` and the dispatcher wrapper functions are memoized using `useCallback` to isolate states and prevent deep, unnecessary re-render propagation.
+* **React Element Memoization**: Inside `app/page.tsx`, the five main sections are memoized at the element level using `useMemo` with their active section states as dependencies. This prevents the heavy components from re-rendering during scroll ticks or HUD transition state shifts.

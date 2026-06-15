@@ -3,7 +3,11 @@
 import { useGame } from "@/lib/game-context"
 import { useState } from "react"
 
-export function GameHUD() {
+interface GameHUDProps {
+  isHidden: boolean
+}
+
+export function GameHUD({ isHidden }: GameHUDProps) {
   const { state, resetGame } = useGame()
   const [showAchievements, setShowAchievements] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
@@ -25,8 +29,10 @@ export function GameHUD() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 bg-secondary/98 border-b-2 border-accent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-6">
+      <div className={`fixed top-0 left-0 right-0 z-50 bg-secondary/98 border-b-2 border-accent backdrop-blur-sm transition-transform duration-300 ${
+        isHidden ? "-translate-y-full" : "translate-y-0"
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-4 flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-6">
           <div className="flex items-center justify-between w-full md:w-auto gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-accent flex items-center justify-center text-secondary text-base md:text-lg font-bold border-2 border-foreground/20">
@@ -103,11 +109,10 @@ export function GameHUD() {
             {state.achievements.map((achievement) => (
               <div
                 key={achievement.id}
-                className={`p-4 rounded-lg mb-3 transition-all duration-300 ${
-                  achievement.unlocked
-                    ? "bg-accent/20 border-2 border-accent hover-glow"
-                    : "bg-secondary/50 border border-foreground/10 opacity-50"
-                }`}
+                className={`p-4 rounded-lg mb-3 transition-all duration-300 ${achievement.unlocked
+                  ? "bg-accent/20 border-2 border-accent hover-glow"
+                  : "bg-secondary/50 border border-foreground/10 opacity-50"
+                  }`}
               >
                 <div className="flex items-center gap-4">
                   <span className="text-3xl">{achievement.icon}</span>

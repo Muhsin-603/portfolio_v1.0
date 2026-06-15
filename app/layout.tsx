@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { GameProvider } from "@/lib/game-context"
+import { SmoothScrollProvider } from "@/components/smooth-scroll-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -35,7 +36,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-display antialiased">
-        <GameProvider>{children}</GameProvider>
+        <SmoothScrollProvider>
+          <GameProvider>{children}</GameProvider>
+        </SmoothScrollProvider>
         <Analytics />
       </body>
     </html>

@@ -139,7 +139,7 @@
 
   /* Smooth scrolling and better base styles */
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
   }
 
   /* Custom scrollbar */
@@ -186,4 +186,25 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+}
+
+html.lenis,
+html.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+html.lenis-smooth body {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  scroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }

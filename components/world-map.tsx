@@ -115,7 +115,7 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
   }
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-7rem)] bg-secondary overflow-y-auto overflow-x-hidden">
+    <div className="relative w-full min-h-[calc(100vh-7rem)] bg-secondary overflow-x-hidden">
       <div className="relative w-full" style={{ minHeight: "800px" }}>
         <div
           className="absolute inset-0 opacity-10"

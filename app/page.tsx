@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { GameStart } from "@/components/game-start"
 import { GameHUD } from "@/components/game-hud"
 import { GameNavigation } from "@/components/game-navigation"
@@ -12,11 +12,16 @@ import { JourneySection } from "@/components/journey-section"
 import { PuzzleRoom } from "@/components/puzzle-room"
 import { WorldMap } from "@/components/world-map"
 import { useGame } from "@/lib/game-context"
+import { useLenis } from "lenis/react"
 
 function GameContent() {
   const { state, incrementClick } = useGame()
+  const lenis = useLenis()
   const [currentSection, setCurrentSection] = useState("spawn")
   const [showMap, setShowMap] = useState(false)
+  const [hideHud, setHideHud] = useState(false)
+  const isHudHiddenRef = useRef(false)
+  const lastScrollY = useRef(0)
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -29,6 +34,43 @@ function GameContent() {
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [state.gameStarted])
+
+  useEffect(() => {
+    if (showMap) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [showMap])
+
+  useEffect(() => {
+    if (!state.gameStarted) {
+      return
+    }
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      let nextHideHud = isHudHiddenRef.current
+
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        nextHideHud = true
+      } else if (currentScrollY < lastScrollY.current) {
+        nextHideHud = false
+      }
+
+      if (nextHideHud !== isHudHiddenRef.current) {
+        isHudHiddenRef.current = nextHideHud
+        setHideHud(nextHideHud)
+      }
+      lastScrollY.current = currentScrollY
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [state.gameStarted])
 
   useEffect(() => {
@@ -75,17 +117,27 @@ function GameContent() {
     setCurrentSection(section)
     setShowMap(false)
 
-    const element = document.getElementById(section)
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+    if (lenis) {
+      lenis.scrollTo(`#${section}`, { offset: -80 })
+    } else {
+      const element = document.getElementById(section)
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" })
+      }
     }
   }
+
+  const spawnSection = useMemo(() => <SpawnSection isActive={currentSection === "spawn"} />, [currentSection === "spawn"])
+  const statsSection = useMemo(() => <StatsSection isActive={currentSection === "stats"} />, [currentSection === "stats"])
+  const inventorySection = useMemo(() => <InventorySection isActive={currentSection === "inventory"} />, [currentSection === "inventory"])
+  const journeySection = useMemo(() => <JourneySection isActive={currentSection === "journey"} />, [currentSection === "journey"])
+  const puzzleSection = useMemo(() => <PuzzleRoom isActive={currentSection === "puzzle"} />, [currentSection === "puzzle"])
 
   return (
     <main className="bg-background min-h-screen">
       <GameStart />
-      <GameHUD />
-      <GameNavigation currentSection={currentSection} onNavigate={handleNavigate} />
+      <GameHUD isHidden={hideHud} />
+      <GameNavigation currentSection={currentSection} onNavigate={handleNavigate} isHudHidden={hideHud} />
       <NotificationToast />
 
       {state.gameStarted && (
@@ -110,20 +162,20 @@ function GameContent() {
           )}
 
           <div className="pt-28 md:pt-36 pb-20 md:pb-8">
-            <section id="spawn" className="scroll-mt-28 md:scroll-mt-36">
-              <SpawnSection isActive={currentSection === "spawn"} />
+            <section id="spawn" className="scroll-mt-24 md:scroll-mt-32">
+              {spawnSection}
             </section>
-            <section id="stats" className="scroll-mt-28 md:scroll-mt-36">
-              <StatsSection isActive={currentSection === "stats"} />
+            <section id="stats" className="scroll-mt-24 md:scroll-mt-32">
+              {statsSection}
             </section>
-            <section id="inventory" className="scroll-mt-28 md:scroll-mt-36">
-              <InventorySection isActive={currentSection === "inventory"} />
+            <section id="inventory" className="scroll-mt-24 md:scroll-mt-32">
+              {inventorySection}
             </section>
-            <section id="journey" className="scroll-mt-28 md:scroll-mt-36">
-              <JourneySection isActive={currentSection === "journey"} />
+            <section id="journey" className="scroll-mt-24 md:scroll-mt-32">
+              {journeySection}
             </section>
-            <section id="puzzle" className="scroll-mt-28 md:scroll-mt-36">
-              <PuzzleRoom isActive={currentSection === "puzzle"} />
+            <section id="puzzle" className="scroll-mt-24 md:scroll-mt-32">
+              {puzzleSection}
             </section>
           </div>
         </>

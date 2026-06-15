@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useReducer, useEffect, useMemo, useCallback, type ReactNode } from "react"
 
 export interface Achievement {
   id: string
@@ -517,21 +517,42 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval)
   }, [state.gameStarted, state.timeSpent, state.achievements])
 
-  const value: GameContextType = {
+  const startGame = useCallback((name: string) => dispatch({ type: "START_GAME", playerName: name }), [])
+  const visitArea = useCallback((area: string) => dispatch({ type: "VISIT_AREA", area }), [])
+  const unlockAchievement = useCallback((id: string) => dispatch({ type: "UNLOCK_ACHIEVEMENT", id }), [])
+  const discoverLore = useCallback((id: string) => dispatch({ type: "DISCOVER_LORE", id }), [])
+  const solvePuzzle = useCallback((id: string) => dispatch({ type: "SOLVE_PUZZLE", id }), [])
+  const addExperience = useCallback((amount: number) => dispatch({ type: "ADD_EXPERIENCE", amount }), [])
+  const incrementClick = useCallback(() => dispatch({ type: "INCREMENT_CLICK" }), [])
+  const findSecret = useCallback((secretId: string) => dispatch({ type: "FIND_SECRET", secretId }), [])
+  const resetGame = useCallback(() => {
+    localStorage.removeItem("portfolio-game-state")
+    dispatch({ type: "RESET_GAME" })
+  }, [])
+
+  const value: GameContextType = useMemo(() => ({
     state,
-    startGame: (name) => dispatch({ type: "START_GAME", playerName: name }),
-    visitArea: (area) => dispatch({ type: "VISIT_AREA", area }),
-    unlockAchievement: (id) => dispatch({ type: "UNLOCK_ACHIEVEMENT", id }),
-    discoverLore: (id) => dispatch({ type: "DISCOVER_LORE", id }),
-    solvePuzzle: (id) => dispatch({ type: "SOLVE_PUZZLE", id }),
-    addExperience: (amount) => dispatch({ type: "ADD_EXPERIENCE", amount }),
-    incrementClick: () => dispatch({ type: "INCREMENT_CLICK" }),
-    findSecret: (secretId) => dispatch({ type: "FIND_SECRET", secretId }),
-    resetGame: () => {
-      localStorage.removeItem("portfolio-game-state")
-      dispatch({ type: "RESET_GAME" })
-    },
-  }
+    startGame,
+    visitArea,
+    unlockAchievement,
+    discoverLore,
+    solvePuzzle,
+    addExperience,
+    incrementClick,
+    findSecret,
+    resetGame,
+  }), [
+    state,
+    startGame,
+    visitArea,
+    unlockAchievement,
+    discoverLore,
+    solvePuzzle,
+    addExperience,
+    incrementClick,
+    findSecret,
+    resetGame,
+  ])
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>
 }
