@@ -24,13 +24,13 @@
   --secondary-foreground: #efefef;
   --muted: #1a1515;
   --muted-foreground: #c4c4c4;
-  --accent: #5f51c2;
+  --accent: #fde047;
   --accent-foreground: #efefef;
   --destructive: #dc2626;
   --destructive-foreground: #efefef;
-  --border: #5f51c2;
+  --border: #fde047;
   --input: #1a1515;
-  --ring: #5f51c2;
+  --ring: #fde047;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -41,10 +41,10 @@
   --sidebar-foreground: #efefef;
   --sidebar-primary: #8a3333;
   --sidebar-primary-foreground: #efefef;
-  --sidebar-accent: #5f51c2;
+  --sidebar-accent: #fde047;
   --sidebar-accent-foreground: #efefef;
-  --sidebar-border: #5f51c2;
-  --sidebar-ring: #5f51c2;
+  --sidebar-border: #fde047;
+  --sidebar-ring: #fde047;
 }
 
 .dark {
@@ -148,12 +148,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #5f51c2;
+    background: #fde047;
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #7a6fd4;
+    background: #fbbf24;
   }
 }
 
@@ -172,11 +172,11 @@
   }
 
   .hover-glow:hover {
-    box-shadow: 0 0 30px rgba(95, 81, 194, 0.3);
+    box-shadow: 0 0 30px rgba(253, 224, 71, 0.3);
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #efefef 0%, #5f51c2 100%);
+    background: linear-gradient(135deg, #efefef 0%, #fde047 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
