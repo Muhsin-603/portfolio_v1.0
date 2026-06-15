@@ -129,7 +129,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased select-none;
+  }
+  img {
+    -webkit-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
   }
 
   /* Smooth scrolling and better base styles */

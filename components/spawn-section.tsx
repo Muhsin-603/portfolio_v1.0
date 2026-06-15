@@ -53,7 +53,7 @@ export function SpawnSection() {
 
       <div className="text-center z-10 max-w-4xl mx-auto">
         <div className="mb-12">
-          <p className="text-accent text-sm tracking-[0.5em] mb-6 animate-pulse font-medium">WELCOME TO</p>
+          <p className="text-accent text-sm tracking-[0.5em] mb-6 animate-pulse font-medium">YOU ARE VIEWING</p>
           <h1 className="text-7xl md:text-9xl text-foreground mb-6 tracking-wider font-heading">Muhsin P</h1>
           <div className="flex items-center justify-center gap-6">
             <div className="h-px w-20 bg-accent/50" />
@@ -72,7 +72,8 @@ export function SpawnSection() {
                 src="/images/Potrait-1.jpeg"
                 alt="Drac - Game Developer"
                 fill
-                className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                draggable={false}
+                className="object-cover grayscale hover:grayscale-0 transition-all duration-500 pointer-events-none"
               />
             </div>
           </div>

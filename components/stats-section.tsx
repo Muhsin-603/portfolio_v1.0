@@ -3,6 +3,7 @@
 import { useGame } from "@/lib/game-context"
 import { useEffect } from "react"
 import Image from "next/image"
+import { equipmentItems } from "@/lib/equipment-data"
 
 interface Stat {
   label: string
@@ -13,16 +14,17 @@ interface Stat {
 const stats: Stat[] = [
   { label: "CLASS", value: "Game Developer", description: "Primary specialization" },
   { label: "LEVEL", value: ".5", description: "Years of experience" },
-  { label: "GUILD", value: "No Company", description: "Current team/company" },
+  { label: "GUILD", value: "INFINEO", description: "Current team/company" },
   { label: "REALM", value: "College of Engineering Vadakara", description: "Location" },
 ]
 
 const skills = [
-  { name: "Unity", level: 5, maxLevel: 100 },
+  { name: "Unity", level: 20, maxLevel: 100 },
   { name: "Unreal Engine", level: 1, maxLevel: 100 },
-  { name: "C#", level: 2, maxLevel: 100 },
-  { name: "C++", level: 1, maxLevel: 100 },
-  { name: "JavaScript", level: 1, maxLevel: 100 },
+  { name: "C#", level: 10, maxLevel: 100 },
+  { name: "C++", level: 5, maxLevel: 100 },
+  { name: "Web Development", level: 20, maxLevel: 100 },
+  { name: "Web Games", level: 50, maxLevel: 100 },
   { name: "3D Modeling", level: 0, maxLevel: 100 },
 ]
 
@@ -62,14 +64,15 @@ export function StatsSection() {
           <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-accent" />
           <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-accent" />
 
-          <h3 className="text-accent text-sm tracking-wider mb-6">// CHARACTER INFO</h3>
+          <h3 className="text-accent text-sm tracking-wider mb-6">CHARACTER INFO</h3>
 
           <div className="w-24 h-24 mx-auto mb-6 border-2 border-accent/50 bg-secondary relative overflow-hidden group/rounded-full">
             <Image
               src="/images/Potrait-1.jpeg"
               alt="Character Avatar"
               fill
-              className="object-cover group-hover:scale-110 transition-transform duration-500"
+              draggable={false}
+              className="object-cover group-hover:scale-110 transition-transform duration-500 pointer-events-none"
             />
           </div>
 
@@ -88,13 +91,13 @@ export function StatsSection() {
           </div>
 
           <div className="mt-6 pt-4 border-t border-accent/20">
-            <h4 className="text-accent text-xs tracking-wider mb-2">// BACKSTORY</h4>
+            <h4 className="text-accent text-xs tracking-wider mb-2">BACKSTORY</h4>
             <p className="text-foreground/60 text-sm leading-relaxed">
-               I started out curious more than confident, the kind of person who pulled things apart just to see how they worked.
-               Code, stories, designs—none of them were goals at first, just places to hide and explore. 
-              I learned by breaking things, overthinking them, fixing them late at night, and then doing it all again the next day a little better. Sometimes I moved fast, sometimes I stalled, but I never stopped building. 
-              Somewhere between unfinished projects and small wins, I realized I wasn't chasing perfection—I was shaping myself. Not loud, not flashy, just steady. 
-              Still learning. Still becoming. 
+              I started out curious more than confident, the kind of person who pulled things apart just to see how they worked.
+              Code, stories, designs—none of them were goals at first, just places to hide and explore.
+              I learned by breaking things, overthinking them, fixing them late at night, and then doing it all again the next day a little better. Sometimes I moved fast, sometimes I stalled, but I never stopped building.
+              Somewhere between unfinished projects and small wins, I realized I wasn't chasing perfection—I was shaping myself. Not loud, not flashy, just steady.
+              Still learning. Still becoming.
             </p>
           </div>
         </div>
@@ -149,12 +152,13 @@ export function StatsSection() {
             </div>
 
             <div className="grid grid-cols-3 gap-3 mt-2">
-              {["VS Code", "Git", "Blender", "Figma", "Photoshop", "Unity", "Unreal", "Godot", "Blender"].map((tool, index) => (
+              {equipmentItems.map((item, index) => (
                 <div
                   key={index}
-                  className="aspect-square bg-secondary border border-accent/20 flex items-center justify-center text-foreground/60 text-xs text-center p-2 hover:border-accent/50 transition-colors cursor-default"
+                  className="aspect-square bg-secondary border border-accent/20 flex flex-col items-center justify-center gap-2 text-foreground/60 text-center p-2 hover:border-accent/50 hover:bg-secondary/80 transition-all cursor-default duration-300 hover:scale-105"
                 >
-                  {tool}
+                  {item.logo}
+                  <span className="text-[10px] text-foreground/40 font-medium tracking-wider uppercase">{item.name}</span>
                 </div>
               ))}
             </div>
