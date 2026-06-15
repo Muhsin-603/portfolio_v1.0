@@ -36,15 +36,19 @@ const traits = [
   { name: "Over Thinker", icon: "◆" },
 ]
 
-export function StatsSection() {
+interface StatsSectionProps {
+  isActive: boolean
+}
+
+export function StatsSection({ isActive }: StatsSectionProps) {
   const { state, visitArea, unlockAchievement } = useGame()
 
   useEffect(() => {
-    if (state.gameStarted) {
+    if (state.gameStarted && isActive) {
       visitArea("stats")
       unlockAchievement("story_seeker")
     }
-  }, [state.gameStarted, visitArea, unlockAchievement])
+  }, [state.gameStarted, isActive, visitArea, unlockAchievement])
 
   return (
     <div className="min-h-screen py-24 px-4 relative">

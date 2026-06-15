@@ -26,10 +26,10 @@ export function GameHUD() {
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-50 bg-secondary/98 border-b-2 border-accent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-3 flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-6">
+          <div className="flex items-center justify-between w-full md:w-auto gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-secondary text-lg font-bold border-2 border-foreground/20">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-accent flex items-center justify-center text-secondary text-base md:text-lg font-bold border-2 border-foreground/20">
                 {state.level}
               </div>
               <div>
@@ -37,16 +37,32 @@ export function GameHUD() {
                 <p className="text-foreground/60 text-xs">Level {state.level} Explorer</p>
               </div>
             </div>
+
+            <div className="flex md:hidden items-center gap-4">
+              <div className="text-right">
+                <p className="text-accent font-bold text-lg">{state.totalPoints}</p>
+                <p className="text-foreground/60 text-[10px]">Points</p>
+              </div>
+              <button
+                onClick={() => setShowAchievements(!showAchievements)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-accent/20 border border-accent rounded-lg"
+              >
+                <span className="text-base">🏆</span>
+                <span className="text-foreground text-xs font-medium">
+                  {unlockedAchievements}/{totalAchievements}
+                </span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex-1 max-w-sm mx-6">
-            <div className="flex justify-between text-xs text-foreground/70 mb-1">
+          <div className="w-full md:flex-1 md:max-w-sm">
+            <div className="flex justify-between text-[10px] md:text-xs text-foreground/70 mb-0.5 md:mb-1">
               <span className="font-medium">EXP</span>
               <span>
                 {experienceToNextLevel} to level {state.level + 1}
               </span>
             </div>
-            <div className="h-3 bg-secondary rounded-full border-2 border-accent/50 overflow-hidden">
+            <div className="h-2.5 md:h-3 bg-secondary rounded-full border-2 border-accent/50 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-accent to-accent/70 transition-all duration-500 rounded-full"
                 style={{ width: `${experienceProgress}%` }}
@@ -54,7 +70,7 @@ export function GameHUD() {
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6">
             <div className="text-right">
               <p className="text-accent font-bold text-xl">{state.totalPoints}</p>
               <p className="text-foreground/60 text-xs">Total Points</p>
@@ -73,7 +89,7 @@ export function GameHUD() {
       </div>
 
       {showAchievements && (
-        <div className="fixed top-20 right-4 z-50 w-96 bg-secondary border-2 border-accent rounded-xl shadow-2xl shadow-accent/20 overflow-hidden">
+        <div className="fixed top-28 md:top-20 right-4 left-4 sm:left-auto z-50 w-auto sm:w-96 bg-secondary border-2 border-accent rounded-xl shadow-2xl shadow-accent/20 overflow-hidden">
           <div className="bg-accent/20 px-6 py-4 border-b border-accent flex justify-between items-center">
             <h3 className="text-foreground font-bold text-lg tracking-wide">ACHIEVEMENTS</h3>
             <button

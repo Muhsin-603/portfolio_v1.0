@@ -42,12 +42,16 @@ const typeColors = {
   personal: "border-accent text-accent",
 }
 
-export function JourneySection() {
+interface JourneySectionProps {
+  isActive: boolean
+}
+
+export function JourneySection({ isActive }: JourneySectionProps) {
   const { state, visitArea, discoverLore } = useGame()
   const [visibleMilestones, setVisibleMilestones] = useState<string[]>([])
 
   useEffect(() => {
-    if (state.gameStarted) {
+    if (state.gameStarted && isActive) {
       visitArea("journey")
 
       const storyLore = state.loreFragments.find((fragment) => fragment.location === "story" && !fragment.discovered)
@@ -55,15 +59,22 @@ export function JourneySection() {
         discoverLore(storyLore.id)
       }
     }
-  }, [state.gameStarted, visitArea, discoverLore])
+  }, [state.gameStarted, isActive, visitArea, discoverLore])
 
   useEffect(() => {
-    milestones.forEach((milestone, index) => {
-      setTimeout(() => {
-        setVisibleMilestones((previousVisible) => [...previousVisible, milestone.id])
-      }, index * 300)
-    })
-  }, [])
+    if (isActive) {
+      milestones.forEach((milestone, index) => {
+        setTimeout(() => {
+          setVisibleMilestones((previousVisible) => {
+            if (previousVisible.includes(milestone.id)) {
+              return previousVisible
+            }
+            return [...previousVisible, milestone.id]
+          })
+        }, index * 300)
+      })
+    }
+  }, [isActive])
 
   return (
     <div className="min-h-screen py-24 px-4 relative overflow-hidden">

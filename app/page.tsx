@@ -31,26 +31,53 @@ function GameContent() {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [state.gameStarted])
 
+  useEffect(() => {
+    if (!state.gameStarted) {
+      return
+    }
+
+    const sections = ["spawn", "stats", "inventory", "journey", "puzzle"]
+    const observerOptions = {
+      root: null,
+      rootMargin: "-40% 0px -40% 0px",
+      threshold: 0,
+    }
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setCurrentSection(entry.target.id)
+        }
+      })
+    }
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions)
+
+    sections.forEach((id) => {
+      const element = document.getElementById(id)
+      if (element) {
+        observer.observe(element)
+      }
+    })
+
+    return () => {
+      sections.forEach((id) => {
+        const element = document.getElementById(id)
+        if (element) {
+          observer.unobserve(element)
+        }
+      })
+    }
+  }, [state.gameStarted])
+
   const handleNavigate = (section: string) => {
     incrementClick()
     setCurrentSection(section)
     setShowMap(false)
-  }
 
-  const renderSection = () => {
-    switch (currentSection) {
-      case "spawn":
-        return <SpawnSection />
-      case "stats":
-        return <StatsSection />
-      case "inventory":
-        return <InventorySection />
-      case "journey":
-        return <JourneySection />
-      case "puzzle":
-        return <PuzzleRoom />
-      default:
-        return <SpawnSection />
+    const element = document.getElementById(section)
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
     }
   }
 
@@ -68,7 +95,7 @@ function GameContent() {
               incrementClick()
               setShowMap(!showMap)
             }}
-            className="fixed bottom-8 right-8 z-40 w-16 h-16 bg-accent border-2 border-foreground/20 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-lg shadow-accent/30 hover-glow group"
+            className="fixed bottom-20 md:bottom-8 right-6 md:right-8 z-40 w-16 h-16 bg-accent border-2 border-foreground/20 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-lg shadow-accent/30 hover-glow group"
           >
             <span className="text-secondary text-2xl font-bold">{showMap ? "×" : "M"}</span>
             <span className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity text-foreground/70 text-xs whitespace-nowrap bg-secondary px-2 py-1 rounded">
@@ -77,12 +104,28 @@ function GameContent() {
           </button>
 
           {showMap && (
-            <div className="fixed inset-0 z-30 pt-20 bg-secondary overflow-y-auto">
+            <div className="fixed inset-0 z-30 pt-28 md:pt-36 pb-20 md:pb-8 bg-secondary overflow-y-auto">
               <WorldMap currentSection={currentSection} onNavigate={handleNavigate} />
             </div>
           )}
 
-          <div className={`pt-20 ${showMap ? "hidden" : ""}`}>{renderSection()}</div>
+          <div className="pt-28 md:pt-36 pb-20 md:pb-8">
+            <section id="spawn" className="scroll-mt-28 md:scroll-mt-36">
+              <SpawnSection isActive={currentSection === "spawn"} />
+            </section>
+            <section id="stats" className="scroll-mt-28 md:scroll-mt-36">
+              <StatsSection isActive={currentSection === "stats"} />
+            </section>
+            <section id="inventory" className="scroll-mt-28 md:scroll-mt-36">
+              <InventorySection isActive={currentSection === "inventory"} />
+            </section>
+            <section id="journey" className="scroll-mt-28 md:scroll-mt-36">
+              <JourneySection isActive={currentSection === "journey"} />
+            </section>
+            <section id="puzzle" className="scroll-mt-28 md:scroll-mt-36">
+              <PuzzleRoom isActive={currentSection === "puzzle"} />
+            </section>
+          </div>
         </>
       )}
     </main>

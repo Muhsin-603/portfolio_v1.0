@@ -62,7 +62,11 @@ const floatingLoreData: FloatingLore[] = [
   },
 ]
 
-export function PuzzleRoom() {
+interface PuzzleRoomProps {
+  isActive: boolean
+}
+
+export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
   const { state, visitArea, solvePuzzle, discoverLore, incrementClick } = useGame()
   const [puzzle, setPuzzle] = useState(puzzles.word.pieces)
   const [selectedPiece, setSelectedPiece] = useState<number | null>(null)
@@ -83,10 +87,10 @@ export function PuzzleRoom() {
   const [memorySolved, setMemorySolved] = useState(false)
 
   useEffect(() => {
-    if (state.gameStarted) {
+    if (state.gameStarted && isActive) {
       visitArea("puzzle")
     }
-  }, [state.gameStarted, visitArea])
+  }, [state.gameStarted, isActive, visitArea])
 
   useEffect(() => {
     const newParticles = Array.from({ length: 40 }, (_unused, index) => ({

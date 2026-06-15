@@ -21,15 +21,15 @@ export function GameNavigation({ currentSection, onNavigate }: GameNavigationPro
   if (!state.gameStarted) return null
 
   return (
-    <nav className="fixed top-16 left-0 right-0 z-40 px-4 py-2 bg-secondary/80 border-b border-accent/20">
+    <nav className="fixed bottom-0 md:top-16 md:bottom-auto left-0 right-0 z-40 px-4 py-2 bg-secondary/90 md:bg-secondary/80 border-t md:border-t-0 md:border-b border-accent/20 backdrop-blur-sm shadow-lg md:shadow-none">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <button onClick={() => onNavigate("spawn")} className="flex items-center gap-2 group">
+        <button onClick={() => onNavigate("spawn")} className="hidden md:flex items-center gap-2 group">
           <div className="text-foreground text-xl tracking-wider group-hover:text-accent transition-colors">
             GoStark
           </div>
         </button>
 
-        <div className="flex items-center gap-1 md:gap-4">
+        <div className="flex items-center justify-between md:justify-center w-full md:w-auto gap-1 md:gap-4">
           {navigationItems.map((item) => {
             const isActive = currentSection === item.id
             const isVisited = state.visitedAreas.includes(item.id)
@@ -45,7 +45,7 @@ export function GameNavigation({ currentSection, onNavigate }: GameNavigationPro
                 <span className="hidden md:inline">{item.label}</span>
                 <span className="md:hidden">{item.shortLabel}</span>
                 {isActive && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent" />}
-                {isVisited && !isActive && (
+                {!isVisited && !isActive && (
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-accent/50 rounded-full" />
                 )}
               </button>
@@ -55,7 +55,7 @@ export function GameNavigation({ currentSection, onNavigate }: GameNavigationPro
 
         <button
           onClick={resetGame}
-          className="text-xs text-foreground/40 hover:text-foreground/60 transition-colors px-2 py-1 border border-transparent hover:border-foreground/20"
+          className="hidden md:block text-xs text-foreground/40 hover:text-foreground/60 transition-colors px-2 py-1 border border-transparent hover:border-foreground/20"
         >
           Reset
         </button>

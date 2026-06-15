@@ -4,15 +4,19 @@ import { useGame } from "@/lib/game-context"
 import { useEffect, useState } from "react"
 import Image from "next/image"
 
-export function SpawnSection() {
+interface SpawnSectionProps {
+  isActive: boolean
+}
+
+export function SpawnSection({ isActive }: SpawnSectionProps) {
   const { state, visitArea, incrementClick, discoverLore } = useGame()
   const [showLoreModal, setShowLoreModal] = useState(false)
 
   useEffect(() => {
-    if (state.gameStarted) {
+    if (state.gameStarted && isActive) {
       visitArea("spawn")
     }
-  }, [state.gameStarted, visitArea])
+  }, [state.gameStarted, isActive, visitArea])
 
   const handleLoreClick = () => {
     incrementClick()
@@ -53,12 +57,12 @@ export function SpawnSection() {
 
       <div className="text-center z-10 max-w-4xl mx-auto">
         <div className="mb-12">
-          <p className="text-accent text-sm tracking-[0.5em] mb-6 animate-pulse font-medium">YOU ARE VIEWING</p>
-          <h1 className="text-7xl md:text-9xl text-foreground mb-6 tracking-wider font-heading">Muhsin P</h1>
-          <div className="flex items-center justify-center gap-6">
-            <div className="h-px w-20 bg-accent/50" />
-            <p className="text-foreground/80 text-xl tracking-[0.3em]">GAME DEVELOPER</p>
-            <div className="h-px w-20 bg-accent/50" />
+          <p className="text-accent text-xs sm:text-sm tracking-[0.5em] mb-6 animate-pulse font-medium">YOU ARE VIEWING</p>
+          <h1 className="text-5xl sm:text-7xl md:text-9xl text-foreground mb-6 tracking-wider font-heading">Muhsin P</h1>
+          <div className="flex items-center justify-center gap-4 sm:gap-6">
+            <div className="h-px w-12 sm:w-20 bg-accent/50" />
+            <p className="text-foreground/80 text-base sm:text-xl tracking-[0.2em] sm:tracking-[0.3em]">GAME DEVELOPER</p>
+            <div className="h-px w-12 sm:w-20 bg-accent/50" />
           </div>
         </div>
 

@@ -81,16 +81,20 @@ const rarityBackgrounds = {
   legendary: "bg-yellow-400/10",
 }
 
-export function InventorySection() {
+interface InventorySectionProps {
+  isActive: boolean
+}
+
+export function InventorySection({ isActive }: InventorySectionProps) {
   const { state, visitArea, unlockAchievement, discoverLore } = useGame()
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [filter, setFilter] = useState<"all" | "completed" | "in-progress">("all")
 
   useEffect(() => {
-    if (state.gameStarted) {
+    if (state.gameStarted && isActive) {
       visitArea("inventory")
     }
-  }, [state.gameStarted, visitArea])
+  }, [state.gameStarted, isActive, visitArea])
 
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project)
