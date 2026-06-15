@@ -12,8 +12,8 @@ export function GameStart() {
   )
 
   useEffect(() => {
-    const newParticles = Array.from({ length: 30 }, (_, i) => ({
-      id: i,
+    const newParticles = Array.from({ length: 30 }, (_unused, index) => ({
+      id: index,
       x: Math.random() * 100,
       y: Math.random() * 100,
       size: Math.random() * 4 + 1,
@@ -57,13 +57,11 @@ export function GameStart() {
           isStarting ? "opacity-0 scale-110" : "opacity-100 scale-100"
         }`}
       >
-        {/* Game Logo - improved typography */}
         <div className="mb-12">
           <h1 className="text-7xl md:text-9xl text-foreground mb-4 tracking-wider font-heading">GoStark</h1>
           <p className="text-accent text-2xl tracking-[0.5em] font-light">PORTFOLIO QUEST</p>
         </div>
 
-        {/* Decorative Border - improved padding and contrast */}
         <div className="relative max-w-lg mx-auto mb-8">
           <div className="absolute -inset-1 bg-accent/30 blur-xl" />
           <div className="relative bg-secondary border-2 border-accent p-10 rounded-lg">
@@ -77,8 +75,8 @@ export function GameStart() {
               <input
                 type="text"
                 value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleStart()}
+                onChange={(event) => setPlayerName(event.target.value)}
+                onKeyDown={(event) => event.key === "Enter" && handleStart()}
                 placeholder="Adventurer"
                 className="w-full bg-secondary border-2 border-accent/50 focus:border-accent px-5 py-4 text-foreground text-lg placeholder:text-foreground/30 outline-none transition-all duration-300 rounded-lg"
                 maxLength={20}

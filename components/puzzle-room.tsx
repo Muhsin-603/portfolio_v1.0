@@ -89,24 +89,21 @@ export function PuzzleRoom() {
   }, [state.gameStarted, visitArea])
 
   useEffect(() => {
-    const newParticles = Array.from({ length: 40 }, (_, i) => ({
-      id: i,
+    const newParticles = Array.from({ length: 40 }, (_unused, index) => ({
+      id: index,
       x: Math.random() * 100,
       y: Math.random() * 100,
       size: Math.random() * 3 + 1,
     }))
     setParticles(newParticles)
 
-    // Initialize memory cards
     const pairs = [...puzzles.memory.pairs, ...puzzles.memory.pairs]
     const shuffled = pairs.sort(() => Math.random() - 0.5)
-    setMemoryCards(shuffled.map((value, i) => ({ id: i, value, flipped: false, matched: false })))
+    setMemoryCards(shuffled.map((value, index) => ({ id: index, value, flipped: false, matched: false })))
 
-    // Generate sequence hint
     setSequenceHint([...puzzles.sequence.sequence].sort(() => Math.random() - 0.5))
   }, [])
 
-  // Check if word puzzle is already solved
   useEffect(() => {
     if (state.puzzlesSolved.includes("word_puzzle")) {
       setIsSolved(true)
@@ -132,11 +129,11 @@ export function PuzzleRoom() {
     } else {
       const newPuzzle = puzzle.map((piece) => {
         if (piece.id === selectedPiece) {
-          const targetPiece = puzzle.find((p) => p.id === pieceId)
+          const targetPiece = puzzle.find((searchPiece) => searchPiece.id === pieceId)
           return { ...piece, currentPosition: targetPiece!.currentPosition }
         }
         if (piece.id === pieceId) {
-          const sourcePiece = puzzle.find((p) => p.id === selectedPiece)
+          const sourcePiece = puzzle.find((searchPiece) => searchPiece.id === selectedPiece)
           return { ...piece, currentPosition: sourcePiece!.currentPosition }
         }
         return piece
@@ -148,7 +145,7 @@ export function PuzzleRoom() {
       if (checkSolved(newPuzzle)) {
         setIsSolved(true)
         solvePuzzle("word_puzzle")
-        const puzzleLore = state.loreFragments.find((l) => l.location === "puzzle" && !l.discovered)
+        const puzzleLore = state.loreFragments.find((fragment) => fragment.location === "puzzle" && !fragment.discovered)
         if (puzzleLore) {
           discoverLore(puzzleLore.id)
         }
@@ -156,15 +153,14 @@ export function PuzzleRoom() {
     }
   }
 
-  const handleSequenceClick = (num: number) => {
+  const handleSequenceClick = (number: number) => {
     if (sequenceSolved) return
     incrementClick()
 
-    const newInput = [...sequenceInput, num]
+    const newInput = [...sequenceInput, number]
     setSequenceInput(newInput)
 
-    // Check if correct so far
-    const isCorrect = newInput.every((n, i) => n === puzzles.sequence.sequence[i])
+    const isCorrect = newInput.every((value, index) => value === puzzles.sequence.sequence[index])
 
     if (!isCorrect) {
       setTimeout(() => setSequenceInput([]), 500)
@@ -181,33 +177,32 @@ export function PuzzleRoom() {
     if (memorySolved || memoryFlipped.length >= 2) return
     incrementClick()
 
-    const card = memoryCards.find((c) => c.id === cardId)
+    const card = memoryCards.find((searchCard) => searchCard.id === cardId)
     if (!card || card.flipped || card.matched) return
 
-    const newCards = memoryCards.map((c) => (c.id === cardId ? { ...c, flipped: true } : c))
+    const newCards = memoryCards.map((existingCard) => (existingCard.id === cardId ? { ...existingCard, flipped: true } : existingCard))
     setMemoryCards(newCards)
     const newFlipped = [...memoryFlipped, cardId]
     setMemoryFlipped(newFlipped)
 
     if (newFlipped.length === 2) {
-      const [first, second] = newFlipped.map((id) => newCards.find((c) => c.id === id)!)
+      const [first, second] = newFlipped.map((id) => newCards.find((existingCard) => existingCard.id === id)!)
 
       if (first.value === second.value) {
-        setMemoryCards((prev) =>
-          prev.map((c) => (c.id === first.id || c.id === second.id ? { ...c, matched: true } : c)),
+        setMemoryCards((previousCards) =>
+          previousCards.map((existingCard) => (existingCard.id === first.id || existingCard.id === second.id ? { ...existingCard, matched: true } : existingCard)),
         )
         setMemoryFlipped([])
 
-        // Check if all matched
-        const allMatched = newCards.every((c) => c.matched || c.id === first.id || c.id === second.id)
+        const allMatched = newCards.every((existingCard) => existingCard.matched || existingCard.id === first.id || existingCard.id === second.id)
         if (allMatched) {
           setMemorySolved(true)
           solvePuzzle("memory_puzzle")
         }
       } else {
         setTimeout(() => {
-          setMemoryCards((prev) =>
-            prev.map((c) => (c.id === first.id || c.id === second.id ? { ...c, flipped: false } : c)),
+          setMemoryCards((previousCards) =>
+            previousCards.map((existingCard) => (existingCard.id === first.id || existingCard.id === second.id ? { ...existingCard, flipped: false } : existingCard)),
           )
           setMemoryFlipped([])
         }, 1000)
@@ -217,22 +212,21 @@ export function PuzzleRoom() {
 
   const handleLoreClick = (loreId: string) => {
     incrementClick()
-    setLocalLore((prev) => prev.map((l) => (l.id === loreId ? { ...l, discovered: true } : l)))
+    setLocalLore((previousLore) => previousLore.map((fragment) => (fragment.id === loreId ? { ...fragment, discovered: true } : fragment)))
     setShowLoreModal(loreId)
-    const gameLore = state.loreFragments.find((l) => !l.discovered)
+
+    const gameLore = state.loreFragments.find((fragment) => !fragment.discovered)
     if (gameLore) {
       discoverLore(gameLore.id)
     }
   }
 
-  const sortedPuzzle = [...puzzle].sort((a, b) => a.currentPosition - b.currentPosition)
+  const sortedPuzzle = [...puzzle].sort((firstPiece, secondPiece) => firstPiece.currentPosition - secondPiece.currentPosition)
 
   return (
     <div className="min-h-screen py-24 px-6 relative overflow-x-hidden">
-      {/* Mystical Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-secondary via-secondary/95 to-secondary" />
 
-      {/* Floating Particles */}
       {particles.map((particle) => (
         <div
           key={particle.id}
@@ -248,7 +242,6 @@ export function PuzzleRoom() {
         />
       ))}
 
-      {/* Floating Lore Fragments */}
       {localLore.map((lore) =>
         !lore.discovered ? (
           <button
@@ -270,7 +263,6 @@ export function PuzzleRoom() {
         ) : null,
       )}
 
-      {/* Section Header - improved typography */}
       <div className="max-w-5xl mx-auto mb-16 relative z-10">
         <div className="flex items-center gap-6 mb-6">
           <div className="h-px flex-1 bg-accent/30" />
@@ -280,9 +272,7 @@ export function PuzzleRoom() {
         <p className="text-center text-foreground/70 text-base">Uncover secrets and solve mysteries to earn rewards</p>
       </div>
 
-      {/* Puzzles Grid - multiple puzzles */}
       <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-8">
-        {/* Word Puzzle */}
         <div className="bg-secondary/80 border-2 border-accent/30 p-8 relative rounded-lg hover-glow transition-all duration-300">
           <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-accent rounded-tl-lg" />
           <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-accent rounded-tr-lg" />
@@ -328,7 +318,6 @@ export function PuzzleRoom() {
           )}
         </div>
 
-        {/* Sequence Puzzle */}
         <div className="bg-secondary/80 border-2 border-accent/30 p-8 relative rounded-lg hover-glow transition-all duration-300">
           <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-accent rounded-tl-lg" />
           <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-accent rounded-tr-lg" />
@@ -339,19 +328,19 @@ export function PuzzleRoom() {
           <p className="text-foreground/70 text-sm text-center mb-6">Enter the correct sequence: 1, 2, 3, 4</p>
 
           <div className="grid grid-cols-4 gap-3 mb-6">
-            {[1, 2, 3, 4].map((num) => (
+            {[1, 2, 3, 4].map((number) => (
               <button
-                key={num}
-                onClick={() => handleSequenceClick(num)}
+                key={number}
+                onClick={() => handleSequenceClick(number)}
                 disabled={sequenceSolved}
                 className={`aspect-square flex items-center justify-center border-2 rounded-lg transition-all duration-300
-                  ${sequenceInput.includes(num) ? "border-accent bg-accent/30" : "border-accent/30 bg-secondary/50"}
+                  ${sequenceInput.includes(number) ? "border-accent bg-accent/30" : "border-accent/30 bg-secondary/50"}
                   ${sequenceSolved ? "border-green-400 bg-green-400/20" : ""}
                   ${!sequenceSolved ? "hover:border-accent hover:scale-105 cursor-pointer" : ""}
                 `}
               >
                 <span className={`text-2xl font-bold ${sequenceSolved ? "text-green-400" : "text-foreground"}`}>
-                  {num}
+                  {number}
                 </span>
               </button>
             ))}
@@ -376,7 +365,6 @@ export function PuzzleRoom() {
           )}
         </div>
 
-        {/* Memory Puzzle */}
         <div className="bg-secondary/80 border-2 border-accent/30 p-8 relative rounded-lg hover-glow transition-all duration-300 lg:col-span-2">
           <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-accent rounded-tl-lg" />
           <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-accent rounded-tr-lg" />
@@ -414,7 +402,6 @@ export function PuzzleRoom() {
         </div>
       </div>
 
-      {/* Lore Collection - improved styling */}
       <div className="max-w-4xl mx-auto mt-12 relative z-10">
         <div className="bg-secondary/80 border border-accent/30 p-8 rounded-lg">
           <h3 className="text-accent text-sm tracking-wider mb-6 font-medium">DISCOVERED FRAGMENTS</h3>
@@ -437,13 +424,12 @@ export function PuzzleRoom() {
 
           <div className="mt-6 text-center">
             <p className="text-foreground/50 text-sm">
-              {localLore.filter((l) => l.discovered).length}/{localLore.length} fragments collected
+              {localLore.filter((fragment) => fragment.discovered).length}/{localLore.length} fragments collected
             </p>
           </div>
         </div>
       </div>
 
-      {/* Lore Modal */}
       {showLoreModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-secondary/95">
           <div className="max-w-md w-full border-2 border-accent bg-secondary p-8 relative rounded-lg animate-in zoom-in duration-300">
@@ -453,7 +439,7 @@ export function PuzzleRoom() {
 
             <div className="mt-6 mb-8">
               <p className="text-foreground text-center italic leading-relaxed text-lg">
-                "{localLore.find((l) => l.id === showLoreModal)?.content}"
+                "{localLore.find((fragment) => fragment.id === showLoreModal)?.content}"
               </p>
             </div>
 

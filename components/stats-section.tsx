@@ -46,7 +46,6 @@ export function StatsSection() {
 
   return (
     <div className="min-h-screen py-24 px-4 relative">
-      {/* Section Header */}
       <div className="max-w-6xl mx-auto mb-12">
         <div className="flex items-center gap-4 mb-4">
           <div className="h-px flex-1 bg-accent/30" />
@@ -57,7 +56,6 @@ export function StatsSection() {
       </div>
 
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-        {/* Left Panel - Character Stats */}
         <div className="bg-secondary/50 border border-accent/30 p-6 relative">
           <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-accent" />
           <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-accent" />
@@ -66,17 +64,15 @@ export function StatsSection() {
 
           <h3 className="text-accent text-sm tracking-wider mb-6">// CHARACTER INFO</h3>
 
-          {/* Avatar - UPGRADED */}
           <div className="w-24 h-24 mx-auto mb-6 border-2 border-accent/50 bg-secondary relative overflow-hidden group/rounded-full">
-            <Image 
-              src="/images/Potrait-1.jpeg" // Make sure this matches your file name!
+            <Image
+              src="/images/Potrait-1.jpeg"
               alt="Character Avatar"
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-500"
             />
           </div>
 
-          {/* Stats Grid */}
           <div className="space-y-4">
             {stats.map((stat) => (
               <div key={stat.label} className="flex justify-between items-center border-b border-accent/20 pb-2">
@@ -91,22 +87,19 @@ export function StatsSection() {
             ))}
           </div>
 
-          {/* Bio */}
           <div className="mt-6 pt-4 border-t border-accent/20">
             <h4 className="text-accent text-xs tracking-wider mb-2">// BACKSTORY</h4>
             <p className="text-foreground/60 text-sm leading-relaxed">
                I started out curious more than confident, the kind of person who pulled things apart just to see how they worked.
                Code, stories, designs—none of them were goals at first, just places to hide and explore. 
               I learned by breaking things, overthinking them, fixing them late at night, and then doing it all again the next day a little better. Sometimes I moved fast, sometimes I stalled, but I never stopped building. 
-              Somewhere between unfinished projects and small wins, I realized I wasn’t chasing perfection—I was shaping myself. Not loud, not flashy, just steady. 
+              Somewhere between unfinished projects and small wins, I realized I wasn't chasing perfection—I was shaping myself. Not loud, not flashy, just steady. 
               Still learning. Still becoming. 
             </p>
           </div>
         </div>
 
-        {/* Right Panel - Skills & Abilities */}
         <div className="space-y-6">
-          {/* Skills */}
           <div className="bg-secondary/50 border border-accent/30 p-6 relative">
             <div className="absolute -top-3 left-4 bg-background px-2">
               <span className="text-accent text-xs tracking-wider">SKILLS</span>
@@ -132,7 +125,6 @@ export function StatsSection() {
             </div>
           </div>
 
-          {/* Traits */}
           <div className="bg-secondary/50 border border-accent/30 p-6 relative">
             <div className="absolute -top-3 left-4 bg-background px-2">
               <span className="text-accent text-xs tracking-wider">TRAITS</span>
@@ -151,16 +143,15 @@ export function StatsSection() {
             </div>
           </div>
 
-          {/* Equipment / Tools */}
           <div className="bg-secondary/50 border border-accent/30 p-6 relative">
             <div className="absolute -top-3 left-4 bg-background px-2">
               <span className="text-accent text-xs tracking-wider">EQUIPMENT</span>
             </div>
 
             <div className="grid grid-cols-3 gap-3 mt-2">
-              {["VS Code", "Git", "Blender", "Figma", "Photoshop", "Unity", "Unreal", "Godot", "Blender"].map((tool, i) => (
+              {["VS Code", "Git", "Blender", "Figma", "Photoshop", "Unity", "Unreal", "Godot", "Blender"].map((tool, index) => (
                 <div
-                  key={i}
+                  key={index}
                   className="aspect-square bg-secondary border border-accent/20 flex items-center justify-center text-foreground/60 text-xs text-center p-2 hover:border-accent/50 transition-colors cursor-default"
                 >
                   {tool}

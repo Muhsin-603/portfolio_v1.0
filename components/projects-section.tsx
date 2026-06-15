@@ -1,7 +1,7 @@
 const projects = [
-  { name: "Project Alpha", type: "Legendary", desc: "A web application built with React" },
-  { name: "Project Beta", type: "Epic", desc: "Mobile app using React Native" },
-  { name: "Project Gamma", type: "Rare", desc: "Backend system with Node.js" },
+  { name: "Project Alpha", type: "Legendary", description: "A web application built with React" },
+  { name: "Project Beta", type: "Epic", description: "Mobile app using React Native" },
+  { name: "Project Gamma", type: "Rare", description: "Backend system with Node.js" },
 ]
 
 export function ProjectsSection() {
@@ -22,7 +22,7 @@ export function ProjectsSection() {
                 <h3 className="text-[#EFEFEF] text-xl">{project.name}</h3>
                 <span className="text-[#5F51C2] text-sm">[{project.type}]</span>
               </div>
-              <p className="text-[#EFEFEF] opacity-70 mt-2 text-sm">{project.desc}</p>
+              <p className="text-[#EFEFEF] opacity-70 mt-2 text-sm">{project.description}</p>
             </div>
           ))}
         </div>

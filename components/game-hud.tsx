@@ -10,26 +10,23 @@ export function GameHUD() {
 
   if (!state.gameStarted) return null
 
-  const expToNextLevel = state.level * 100 - (state.experience % 100)
-  const expProgress = ((state.experience % 100) / 100) * 100
+  const experienceToNextLevel = state.level * 100 - (state.experience % 100)
+  const experienceProgress = ((state.experience % 100) / 100) * 100
 
-  const unlockedAchievements = state.achievements.filter((a) => a.unlocked).length
+  const unlockedAchievements = state.achievements.filter((achievement) => achievement.unlocked).length
   const totalAchievements = state.achievements.length
 
   const handleReset = () => {
     resetGame()
     setShowResetConfirm(false)
     setShowAchievements(false)
-    // Force page reload to clear all state
     window.location.reload()
   }
 
   return (
     <>
-      {/* Top HUD Bar - improved contrast and padding */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-secondary/98 border-b-2 border-accent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          {/* Player Info */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-secondary text-lg font-bold border-2 border-foreground/20">
@@ -42,23 +39,21 @@ export function GameHUD() {
             </div>
           </div>
 
-          {/* XP Bar - improved visibility */}
           <div className="flex-1 max-w-sm mx-6">
             <div className="flex justify-between text-xs text-foreground/70 mb-1">
               <span className="font-medium">EXP</span>
               <span>
-                {expToNextLevel} to level {state.level + 1}
+                {experienceToNextLevel} to level {state.level + 1}
               </span>
             </div>
             <div className="h-3 bg-secondary rounded-full border-2 border-accent/50 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-accent to-accent/70 transition-all duration-500 rounded-full"
-                style={{ width: `${expProgress}%` }}
+                style={{ width: `${experienceProgress}%` }}
               />
             </div>
           </div>
 
-          {/* Points & Achievements */}
           <div className="flex items-center gap-6">
             <div className="text-right">
               <p className="text-accent font-bold text-xl">{state.totalPoints}</p>
@@ -77,7 +72,6 @@ export function GameHUD() {
         </div>
       </div>
 
-      {/* Achievement Panel - improved styling */}
       {showAchievements && (
         <div className="fixed top-20 right-4 z-50 w-96 bg-secondary border-2 border-accent rounded-xl shadow-2xl shadow-accent/20 overflow-hidden">
           <div className="bg-accent/20 px-6 py-4 border-b border-accent flex justify-between items-center">

@@ -19,10 +19,10 @@ function GameContent() {
   const [showMap, setShowMap] = useState(false)
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "m" || e.key === "M") {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "m" || event.key === "M") {
         if (state.gameStarted) {
-          setShowMap((prev) => !prev)
+          setShowMap((previousValue) => !previousValue)
         }
       }
     }
@@ -63,7 +63,6 @@ function GameContent() {
 
       {state.gameStarted && (
         <>
-          {/* Map Toggle Button - improved styling */}
           <button
             onClick={() => {
               incrementClick()
@@ -77,14 +76,12 @@ function GameContent() {
             </span>
           </button>
 
-          {/* World Map Overlay - fixed z-index and scroll */}
           {showMap && (
             <div className="fixed inset-0 z-30 pt-20 bg-secondary overflow-y-auto">
               <WorldMap currentSection={currentSection} onNavigate={handleNavigate} />
             </div>
           )}
 
-          {/* Section Content */}
           <div className={`pt-20 ${showMap ? "hidden" : ""}`}>{renderSection()}</div>
         </>
       )}

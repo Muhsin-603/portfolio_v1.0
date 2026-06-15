@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 interface MapLocation {
   id: string
   name: string
-  navName: string
+  navigationName: string
   description: string
   x: number
   y: number
@@ -19,7 +19,7 @@ const locations: MapLocation[] = [
   {
     id: "spawn",
     name: "Initial Spawn",
-    navName: "Home",
+    navigationName: "Home",
     description: "Where every journey begins",
     x: 50,
     y: 20,
@@ -29,7 +29,7 @@ const locations: MapLocation[] = [
   {
     id: "stats",
     name: "Stats Chamber",
-    navName: "About",
+    navigationName: "About",
     description: "Learn about the developer",
     x: 20,
     y: 40,
@@ -39,7 +39,7 @@ const locations: MapLocation[] = [
   {
     id: "inventory",
     name: "Inventory Hall",
-    navName: "Projects",
+    navigationName: "Projects",
     description: "View collected works",
     x: 80,
     y: 40,
@@ -49,7 +49,7 @@ const locations: MapLocation[] = [
   {
     id: "journey",
     name: "Journey Map",
-    navName: "Journey",
+    navigationName: "Journey",
     description: "The path traveled so far",
     x: 30,
     y: 70,
@@ -59,7 +59,7 @@ const locations: MapLocation[] = [
   {
     id: "puzzle",
     name: "Puzzle Chamber",
-    navName: "Puzzles",
+    navigationName: "Puzzles",
     description: "Mysteries await...",
     x: 70,
     y: 70,
@@ -89,8 +89,8 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; delay: number }>>([])
 
   useEffect(() => {
-    const newParticles = Array.from({ length: 20 }, (_, i) => ({
-      id: i,
+    const newParticles = Array.from({ length: 20 }, (_unused, index) => ({
+      id: index,
       x: Math.random() * 100,
       y: Math.random() * 100,
       delay: Math.random() * 5,
@@ -116,9 +116,7 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
 
   return (
     <div className="relative w-full min-h-[calc(100vh-7rem)] bg-secondary overflow-y-auto overflow-x-hidden">
-      {/* Scrollable content wrapper */}
       <div className="relative w-full" style={{ minHeight: "800px" }}>
-        {/* Grid Background */}
         <div
           className="absolute inset-0 opacity-10"
           style={{
@@ -130,7 +128,6 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
           }}
         />
 
-        {/* Floating Particles */}
         {particles.map((particle) => (
           <div
             key={particle.id}
@@ -143,7 +140,6 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
           />
         ))}
 
-        {/* Connection Lines */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ minHeight: "800px" }}>
           <defs>
             <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -177,16 +173,15 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
           )
         })}
 
-        {/* Floating Lore Fragments */}
-        {floatingLorePositions.map((lorePos) => {
-          const lore = state.loreFragments.find((l) => l.id === lorePos.loreId)
+        {floatingLorePositions.map((lorePosition) => {
+          const lore = state.loreFragments.find((fragment) => fragment.id === lorePosition.loreId)
           if (!lore || lore.discovered) return null
           return (
             <button
-              key={lorePos.loreId}
-              onClick={() => handleLoreClick(lorePos.loreId)}
+              key={lorePosition.loreId}
+              onClick={() => handleLoreClick(lorePosition.loreId)}
               className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-20"
-              style={{ left: `${lorePos.x}%`, top: `${lorePos.y}%` }}
+              style={{ left: `${lorePosition.x}%`, top: `${lorePosition.y}%` }}
             >
               <div className="relative">
                 <div className="w-10 h-10 bg-accent/20 border-2 border-accent rotate-45 animate-bounce group-hover:scale-125 transition-transform hover-glow" />
@@ -199,7 +194,6 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
           )
         })}
 
-        {/* Map Locations */}
         {locations.map((location) => {
           const isVisited = state.visitedAreas.includes(location.id)
           const isCurrent = currentSection === location.id
@@ -223,7 +217,6 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
               `}
               style={{ left: `${location.x}%`, top: `${location.y}%` }}
             >
-              {/* Location Node */}
               <div
                 className={`
                 ${sizeClasses[location.size]}
@@ -232,7 +225,6 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
                 transition-all duration-500
               `}
               >
-                {/* Outer Ring */}
                 <div
                   className={`absolute inset-0 border-2 
                   ${isCurrent ? "border-accent bg-accent/20" : "border-foreground/40"}
@@ -243,7 +235,6 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
                 `}
                 />
 
-                {/* Inner Core */}
                 <div
                   className={`w-3/4 h-3/4 flex items-center justify-center
                   ${isCurrent ? "bg-accent" : "bg-secondary"}
@@ -258,17 +249,15 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
                     ${location.type === "puzzle" ? "-rotate-45" : ""}
                   `}
                   >
-                    {location.navName.substring(0, 3).toUpperCase()}
+                    {location.navigationName.substring(0, 3).toUpperCase()}
                   </span>
                 </div>
 
-                {/* Pulse Effect for Current */}
                 {isCurrent && (
                   <div className="absolute inset-0 rounded-full border-2 border-accent animate-ping opacity-50" />
                 )}
               </div>
 
-              {/* Location Label */}
               <div
                 className={`absolute top-full mt-4 left-1/2 -translate-x-1/2 text-center transition-all duration-300
                 ${isHovered || isCurrent ? "opacity-100" : "opacity-70"}
@@ -282,7 +271,6 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
           )
         })}
 
-        {/* Map Legend - improved padding and styling */}
         <div className="absolute bottom-8 left-8 bg-secondary/90 border border-accent/30 p-6 rounded-lg backdrop-blur-sm">
           <h4 className="text-foreground text-sm font-bold mb-4 tracking-wide">LEGEND</h4>
           <div className="flex flex-col gap-3 text-xs">
@@ -307,7 +295,6 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
           </div>
         </div>
 
-        {/* Mini Stats - improved styling */}
         <div className="absolute bottom-8 right-8 bg-secondary/90 border border-accent/30 p-6 rounded-lg text-right backdrop-blur-sm">
           <p className="text-foreground/60 text-xs tracking-wide">AREAS EXPLORED</p>
           <p className="text-accent text-3xl font-bold mt-1">
@@ -316,7 +303,7 @@ export function WorldMap({ onNavigate, currentSection }: WorldMapProps) {
           </p>
           <p className="text-foreground/60 text-xs mt-4 tracking-wide">LORE FOUND</p>
           <p className="text-accent text-3xl font-bold mt-1">
-            {state.loreFragments.filter((l) => l.discovered).length}
+            {state.loreFragments.filter((fragment) => fragment.discovered).length}
             <span className="text-foreground/40">/{state.loreFragments.length}</span>
           </p>
         </div>

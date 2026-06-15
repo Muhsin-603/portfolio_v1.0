@@ -14,34 +14,34 @@ interface Notification {
 export function NotificationToast() {
   const { state } = useGame()
   const [notifications, setNotifications] = useState<Notification[]>([])
-  const prevAchievementsRef = useRef<string[]>([])
-  const prevLoreRef = useRef<string[]>([])
-  const initializedRef = useRef(false)
+  const previousAchievementsReference = useRef<string[]>([])
+  const previousLoreReference = useRef<string[]>([])
+  const initializedReference = useRef(false)
 
   const addNotification = useCallback((notification: Omit<Notification, "id">) => {
-    const id = Math.random().toString(36)
-    setNotifications((prev) => [...prev, { ...notification, id }])
+    const notificationIdentifier = Math.random().toString(36)
+    setNotifications((previousNotifications) => [...previousNotifications, { ...notification, id: notificationIdentifier }])
     setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n.id !== id))
+      setNotifications((previousNotifications) => previousNotifications.filter((existingNotification) => existingNotification.id !== notificationIdentifier))
     }, 3000)
   }, [])
 
   useEffect(() => {
-    if (!initializedRef.current) {
-      prevAchievementsRef.current = state.achievements.filter((a) => a.unlocked).map((a) => a.id)
-      prevLoreRef.current = state.loreFragments.filter((l) => l.discovered).map((l) => l.id)
-      initializedRef.current = true
+    if (!initializedReference.current) {
+      previousAchievementsReference.current = state.achievements.filter((achievement) => achievement.unlocked).map((achievement) => achievement.id)
+      previousLoreReference.current = state.loreFragments.filter((fragment) => fragment.discovered).map((fragment) => fragment.id)
+      initializedReference.current = true
     }
   }, [state.achievements, state.loreFragments])
 
   useEffect(() => {
-    if (!initializedRef.current) return
+    if (!initializedReference.current) return
 
-    const currentUnlocked = state.achievements.filter((a) => a.unlocked).map((a) => a.id)
-    const newAchievements = currentUnlocked.filter((id) => !prevAchievementsRef.current.includes(id))
+    const currentUnlocked = state.achievements.filter((achievement) => achievement.unlocked).map((achievement) => achievement.id)
+    const newAchievements = currentUnlocked.filter((id) => !previousAchievementsReference.current.includes(id))
 
     newAchievements.forEach((id) => {
-      const achievement = state.achievements.find((a) => a.id === id)
+      const achievement = state.achievements.find((existingAchievement) => existingAchievement.id === id)
       if (achievement) {
         addNotification({
           type: "achievement",
@@ -51,17 +51,18 @@ export function NotificationToast() {
         })
       }
     })
-    prevAchievementsRef.current = currentUnlocked
+
+    previousAchievementsReference.current = currentUnlocked
   }, [state.achievements, addNotification])
 
   useEffect(() => {
-    if (!initializedRef.current) return
+    if (!initializedReference.current) return
 
-    const currentDiscovered = state.loreFragments.filter((l) => l.discovered).map((l) => l.id)
-    const newLore = currentDiscovered.filter((id) => !prevLoreRef.current.includes(id))
+    const currentDiscovered = state.loreFragments.filter((fragment) => fragment.discovered).map((fragment) => fragment.id)
+    const newLore = currentDiscovered.filter((id) => !previousLoreReference.current.includes(id))
 
     newLore.forEach((id) => {
-      const lore = state.loreFragments.find((l) => l.id === id)
+      const lore = state.loreFragments.find((fragment) => fragment.id === id)
       if (lore) {
         addNotification({
           type: "lore",
@@ -71,7 +72,8 @@ export function NotificationToast() {
         })
       }
     })
-    prevLoreRef.current = currentDiscovered
+
+    previousLoreReference.current = currentDiscovered
   }, [state.loreFragments, addNotification])
 
   return (

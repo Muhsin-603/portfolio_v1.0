@@ -26,27 +26,6 @@ const milestones: Milestone[] = [
     description: "Simple Game Devolopment and my first almost completed game dev journey",
     type: "achievement",
   },
-  // {
-  //   id: "m3",
-  //   year: "----",
-  //   title: "[ First Project ]",
-  //   description: "Your first significant project or creation.",
-  //   type: "achievement",
-  // },
-  // {
-  //   id: "m4",
-  //   year: "----",
-  //   title: "[ Career Start ]",
-  //   description: "When you started working professionally.",
-  //   type: "work",
-  // },
-  // {
-  //   id: "m5",
-  //   year: "----",
-  //   title: "[ Current Chapter ]",
-  //   description: "Where you are now and what you're working on.",
-  //   type: "work",
-  // },
 ]
 
 const typeIcons = {
@@ -70,8 +49,8 @@ export function JourneySection() {
   useEffect(() => {
     if (state.gameStarted) {
       visitArea("journey")
-      // Discover story lore
-      const storyLore = state.loreFragments.find((l) => l.location === "story" && !l.discovered)
+
+      const storyLore = state.loreFragments.find((fragment) => fragment.location === "story" && !fragment.discovered)
       if (storyLore) {
         discoverLore(storyLore.id)
       }
@@ -79,17 +58,15 @@ export function JourneySection() {
   }, [state.gameStarted, visitArea, discoverLore])
 
   useEffect(() => {
-    // Animate milestones appearing one by one
-    milestones.forEach((m, i) => {
+    milestones.forEach((milestone, index) => {
       setTimeout(() => {
-        setVisibleMilestones((prev) => [...prev, m.id])
-      }, i * 300)
+        setVisibleMilestones((previousVisible) => [...previousVisible, milestone.id])
+      }, index * 300)
     })
   }, [])
 
   return (
     <div className="min-h-screen py-24 px-4 relative overflow-hidden">
-      {/* Background Path Lines */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-10">
         <path
           d="M 0 200 Q 400 100 800 300 T 1600 200"
@@ -107,7 +84,6 @@ export function JourneySection() {
         />
       </svg>
 
-      {/* Section Header */}
       <div className="max-w-4xl mx-auto mb-12">
         <div className="flex items-center gap-4 mb-4">
           <div className="h-px flex-1 bg-accent/30" />
@@ -117,7 +93,6 @@ export function JourneySection() {
         <p className="text-center text-foreground/60 text-sm">The path traveled through time</p>
       </div>
 
-      {/* Legend */}
       <div className="max-w-4xl mx-auto mb-8 flex justify-center gap-6 flex-wrap">
         {Object.entries(typeIcons).map(([type, icon]) => (
           <div key={type} className="flex items-center gap-2">
@@ -127,9 +102,7 @@ export function JourneySection() {
         ))}
       </div>
 
-      {/* Timeline */}
       <div className="max-w-4xl mx-auto relative">
-        {/* Central Line */}
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-accent/30 transform -translate-x-1/2" />
 
         <div className="space-y-12">
@@ -144,7 +117,6 @@ export function JourneySection() {
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                 } ${isLeft ? "flex-row" : "flex-row-reverse"}`}
               >
-                {/* Content Card */}
                 <div className={`flex-1 ${isLeft ? "text-right" : "text-left"}`}>
                   <div
                     className={`inline-block bg-secondary/50 border ${typeColors[milestone.type]} p-4 max-w-sm
@@ -159,7 +131,6 @@ export function JourneySection() {
                   </div>
                 </div>
 
-                {/* Center Node */}
                 <div className="relative z-10">
                   <div
                     className={`w-4 h-4 ${typeColors[milestone.type]} border-2 bg-secondary rotate-45
@@ -167,14 +138,12 @@ export function JourneySection() {
                   />
                 </div>
 
-                {/* Spacer */}
                 <div className="flex-1" />
               </div>
             )
           })}
         </div>
 
-        {/* Future Indicator */}
         <div className="mt-12 text-center">
           <div className="inline-flex flex-col items-center">
             <div className="w-px h-12 bg-accent/30" />

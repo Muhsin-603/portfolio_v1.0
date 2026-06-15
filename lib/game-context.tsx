@@ -234,8 +234,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         gameStarted: true,
         timeSpent: Date.now(),
       }
-      const achievements = newState.achievements.map((a) => (a.id === "first_spawn" ? { ...a, unlocked: true } : a))
-      const points = achievements.find((a) => a.id === "first_spawn")?.points || 0
+
+      const achievements = newState.achievements.map((achievement) =>
+        achievement.id === "first_spawn" ? { ...achievement, unlocked: true } : achievement
+      )
+      const points = achievements.find((achievement) => achievement.id === "first_spawn")?.points || 0
+
       return {
         ...newState,
         achievements,
@@ -247,14 +251,17 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
     case "VISIT_AREA": {
       if (state.visitedAreas.includes(action.area)) return state
+
       const visitedAreas = [...state.visitedAreas, action.area]
       let achievements = [...state.achievements]
       let addedPoints = 5
 
       if (visitedAreas.length >= 5) {
-        achievements = achievements.map((a) => (a.id === "explorer" && !a.unlocked ? { ...a, unlocked: true } : a))
-        const explorerAchievement = achievements.find((a) => a.id === "explorer")
-        if (explorerAchievement?.unlocked && !state.achievements.find((a) => a.id === "explorer")?.unlocked) {
+        achievements = achievements.map((achievement) =>
+          achievement.id === "explorer" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement
+        )
+        const explorerAchievement = achievements.find((achievement) => achievement.id === "explorer")
+        if (explorerAchievement?.unlocked && !state.achievements.find((achievement) => achievement.id === "explorer")?.unlocked) {
           addedPoints += explorerAchievement.points
         }
       }
@@ -262,11 +269,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       if (visitedAreas.length >= 5 && state.timeSpent > 0) {
         const elapsed = (Date.now() - state.timeSpent) / 1000
         if (elapsed < 60) {
-          achievements = achievements.map((a) =>
-            a.id === "speed_runner" && !a.unlocked ? { ...a, unlocked: true } : a,
+          achievements = achievements.map((achievement) =>
+            achievement.id === "speed_runner" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement,
           )
-          const speedAchievement = achievements.find((a) => a.id === "speed_runner")
-          if (speedAchievement?.unlocked && !state.achievements.find((a) => a.id === "speed_runner")?.unlocked) {
+          const speedAchievement = achievements.find((achievement) => achievement.id === "speed_runner")
+          if (speedAchievement?.unlocked && !state.achievements.find((achievement) => achievement.id === "speed_runner")?.unlocked) {
             addedPoints += speedAchievement.points
           }
         }
@@ -288,9 +295,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       let addedPoints = 0
 
       if (newClickCount >= 50) {
-        achievements = achievements.map((a) => (a.id === "curious_one" && !a.unlocked ? { ...a, unlocked: true } : a))
-        const curiousAchievement = achievements.find((a) => a.id === "curious_one")
-        if (curiousAchievement?.unlocked && !state.achievements.find((a) => a.id === "curious_one")?.unlocked) {
+        achievements = achievements.map((achievement) =>
+          achievement.id === "curious_one" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement
+        )
+        const curiousAchievement = achievements.find((achievement) => achievement.id === "curious_one")
+        if (curiousAchievement?.unlocked && !state.achievements.find((achievement) => achievement.id === "curious_one")?.unlocked) {
           addedPoints += curiousAchievement.points
         }
       }
@@ -307,13 +316,16 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
     case "FIND_SECRET": {
       if (state.secretsFound.includes(action.secretId)) return state
+
       const secretsFound = [...state.secretsFound, action.secretId]
       let achievements = [...state.achievements]
       let addedPoints = 15
 
-      achievements = achievements.map((a) => (a.id === "secret_finder" && !a.unlocked ? { ...a, unlocked: true } : a))
-      const secretAchievement = achievements.find((a) => a.id === "secret_finder")
-      if (secretAchievement?.unlocked && !state.achievements.find((a) => a.id === "secret_finder")?.unlocked) {
+      achievements = achievements.map((achievement) =>
+        achievement.id === "secret_finder" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement
+      )
+      const secretAchievement = achievements.find((achievement) => achievement.id === "secret_finder")
+      if (secretAchievement?.unlocked && !state.achievements.find((achievement) => achievement.id === "secret_finder")?.unlocked) {
         addedPoints += secretAchievement.points
       }
 
@@ -328,15 +340,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case "UNLOCK_ACHIEVEMENT": {
-      const achievement = state.achievements.find((a) => a.id === action.id)
+      const achievement = state.achievements.find((existingAchievement) => existingAchievement.id === action.id)
       if (!achievement || achievement.unlocked) return state
 
-      const achievements = state.achievements.map((a) => (a.id === action.id ? { ...a, unlocked: true } : a))
+      const achievements = state.achievements.map((existingAchievement) =>
+        existingAchievement.id === action.id ? { ...existingAchievement, unlocked: true } : existingAchievement
+      )
 
-      const unlockedCount = achievements.filter((a) => a.unlocked && a.id !== "completionist").length
+      const unlockedCount = achievements.filter((existingAchievement) => existingAchievement.unlocked && existingAchievement.id !== "completionist").length
       if (unlockedCount === achievements.length - 1) {
-        const finalAchievements = achievements.map((a) => (a.id === "completionist" ? { ...a, unlocked: true } : a))
-        const completionistPoints = finalAchievements.find((a) => a.id === "completionist")?.points || 0
+        const finalAchievements = achievements.map((existingAchievement) =>
+          existingAchievement.id === "completionist" ? { ...existingAchievement, unlocked: true } : existingAchievement
+        )
+        const completionistPoints = finalAchievements.find((existingAchievement) => existingAchievement.id === "completionist")?.points || 0
         return {
           ...state,
           achievements: finalAchievements,
@@ -356,26 +372,32 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case "DISCOVER_LORE": {
-      const lore = state.loreFragments.find((l) => l.id === action.id)
+      const lore = state.loreFragments.find((fragment) => fragment.id === action.id)
       if (!lore || lore.discovered) return state
 
-      const loreFragments = state.loreFragments.map((l) => (l.id === action.id ? { ...l, discovered: true } : l))
-      const discoveredCount = loreFragments.filter((l) => l.discovered).length
+      const loreFragments = state.loreFragments.map((fragment) =>
+        fragment.id === action.id ? { ...fragment, discovered: true } : fragment
+      )
+      const discoveredCount = loreFragments.filter((fragment) => fragment.discovered).length
       let achievements = [...state.achievements]
       let addedPoints = 10
 
       if (discoveredCount >= 3) {
-        achievements = achievements.map((a) => (a.id === "lore_hunter" && !a.unlocked ? { ...a, unlocked: true } : a))
-        const loreAchievement = achievements.find((a) => a.id === "lore_hunter")
-        if (loreAchievement?.unlocked && !state.achievements.find((a) => a.id === "lore_hunter")?.unlocked) {
+        achievements = achievements.map((achievement) =>
+          achievement.id === "lore_hunter" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement
+        )
+        const loreAchievement = achievements.find((achievement) => achievement.id === "lore_hunter")
+        if (loreAchievement?.unlocked && !state.achievements.find((achievement) => achievement.id === "lore_hunter")?.unlocked) {
           addedPoints += loreAchievement.points
         }
       }
 
       if (discoveredCount === loreFragments.length) {
-        achievements = achievements.map((a) => (a.id === "lore_master" && !a.unlocked ? { ...a, unlocked: true } : a))
-        const loreMasterAchievement = achievements.find((a) => a.id === "lore_master")
-        if (loreMasterAchievement?.unlocked && !state.achievements.find((a) => a.id === "lore_master")?.unlocked) {
+        achievements = achievements.map((achievement) =>
+          achievement.id === "lore_master" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement
+        )
+        const loreMasterAchievement = achievements.find((achievement) => achievement.id === "lore_master")
+        if (loreMasterAchievement?.unlocked && !state.achievements.find((achievement) => achievement.id === "lore_master")?.unlocked) {
           addedPoints += loreMasterAchievement.points
         }
       }
@@ -392,20 +414,25 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
     case "SOLVE_PUZZLE": {
       if (state.puzzlesSolved.includes(action.id)) return state
+
       const puzzlesSolved = [...state.puzzlesSolved, action.id]
       let achievements = [...state.achievements]
       let addedPoints = 15
 
       if (puzzlesSolved.length === 1) {
-        achievements = achievements.map((a) => (a.id === "puzzle_master" && !a.unlocked ? { ...a, unlocked: true } : a))
-        const puzzleAchievement = achievements.find((a) => a.id === "puzzle_master")
+        achievements = achievements.map((achievement) =>
+          achievement.id === "puzzle_master" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement
+        )
+        const puzzleAchievement = achievements.find((achievement) => achievement.id === "puzzle_master")
         if (puzzleAchievement?.unlocked) addedPoints += puzzleAchievement.points
       }
 
       if (puzzlesSolved.length >= 3) {
-        achievements = achievements.map((a) => (a.id === "puzzle_solver" && !a.unlocked ? { ...a, unlocked: true } : a))
-        const allPuzzlesAchievement = achievements.find((a) => a.id === "puzzle_solver")
-        if (allPuzzlesAchievement?.unlocked && !state.achievements.find((a) => a.id === "puzzle_solver")?.unlocked) {
+        achievements = achievements.map((achievement) =>
+          achievement.id === "puzzle_solver" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement
+        )
+        const allPuzzlesAchievement = achievements.find((achievement) => achievement.id === "puzzle_solver")
+        if (allPuzzlesAchievement?.unlocked && !state.achievements.find((achievement) => achievement.id === "puzzle_solver")?.unlocked) {
           addedPoints += allPuzzlesAchievement.points
         }
       }
@@ -465,7 +492,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(saved)
         dispatch({ type: "LOAD_STATE", state: parsed })
-      } catch (e) {
+      } catch (error) {
         console.error("Failed to load game state")
       }
     }
@@ -482,7 +509,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
     const interval = setInterval(() => {
       const elapsed = (Date.now() - state.timeSpent) / 1000
-      if (elapsed >= 300 && !state.achievements.find((a) => a.id === "dedicated")?.unlocked) {
+      if (elapsed >= 300 && !state.achievements.find((achievement) => achievement.id === "dedicated")?.unlocked) {
         dispatch({ type: "UNLOCK_ACHIEVEMENT", id: "dedicated" })
       }
     }, 10000)

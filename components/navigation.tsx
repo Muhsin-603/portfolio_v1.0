@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 
-const navItems = [
+const navigationItems = [
   { label: "initial spawn", href: "#home" },
   { label: "stats", href: "#about" },
   { label: "inventory", href: "#projects" },
@@ -23,7 +23,6 @@ export function Navigation() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-        {/* Logo */}
         <div className="flex flex-col items-center">
           <div className="text-[#EFEFEF] text-xs tracking-wider">
             <span className="text-lg">👁️‍🗨️</span>
@@ -31,9 +30,8 @@ export function Navigation() {
           <span className="text-[#EFEFEF] text-sm font-display">GoStark</span>
         </div>
 
-        {/* Nav Items */}
         <div className="flex items-center gap-12">
-          {navItems.map((item) => (
+          {navigationItems.map((item) => (
             <Link
               key={item.label}
               href={item.href}
@@ -47,7 +45,6 @@ export function Navigation() {
           ))}
         </div>
 
-        {/* Social Icons */}
         <div className="flex items-center gap-3">
           {socialLinks.map((social) => (
             <Link
