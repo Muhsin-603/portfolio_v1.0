@@ -8,7 +8,6 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: "Muhsin P - Portfolio Quest",
   description: "A game developer's portfolio - an interactive journey through projects, skills, and achievements",
-  generator: "v0.app",
   icons: {
     icon: [
       {

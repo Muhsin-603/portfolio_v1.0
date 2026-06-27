@@ -77,7 +77,7 @@ export function SpawnSection({ isActive }: SpawnSectionProps) {
             <div className="w-32 h-32 relative">
               <Image
                 src="/images/Potrait-1.jpeg"
-                alt="Drac - Game Developer"
+                alt="Muhsin P - Game Developer"
                 fill
                 draggable={false}
                 className="object-cover grayscale hover:grayscale-0 group-hover:scale-105 transition-all duration-500 pointer-events-none"

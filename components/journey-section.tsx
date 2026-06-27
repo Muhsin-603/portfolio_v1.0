@@ -23,7 +23,7 @@ const milestones: Milestone[] = [
     id: "m2",
     year: "2025",
     title: "Lullaby Down Below",
-    description: "Simple Game Devolopment and my first almost completed game dev journey",
+    description: "Simple Game Development and my first almost completed game dev journey",
     type: "achievement",
   },
 ]

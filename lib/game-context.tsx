@@ -221,7 +221,6 @@ type GameAction =
   | { type: "SET_STATE_LOADED" }
   | { type: "RESET_GAME" }
   | { type: "INCREMENT_CLICK" }
-  | { type: "UPDATE_TIME"; time: number }
   | { type: "FIND_SECRET"; secretId: string }
 
 function calculateLevel(experience: number): number {
@@ -480,29 +479,58 @@ function isValidGameState(loadedState: any): loadedState is GameState {
   const hasLevel = typeof loadedState.level === "number"
   const hasExperience = typeof loadedState.experience === "number"
   const hasTotalPoints = typeof loadedState.totalPoints === "number"
-  const hasAchievements = Array.isArray(loadedState.achievements)
-  const hasLoreFragments = Array.isArray(loadedState.loreFragments)
-  const hasVisitedAreas = Array.isArray(loadedState.visitedAreas)
-  const hasPuzzlesSolved = Array.isArray(loadedState.puzzlesSolved)
   const hasGameStarted = typeof loadedState.gameStarted === "boolean"
   const hasClickCount = typeof loadedState.clickCount === "number"
   const hasTimeSpent = typeof loadedState.timeSpent === "number"
-  const hasSecretsFound = Array.isArray(loadedState.secretsFound)
 
-  return (
-    hasPlayerName &&
-    hasLevel &&
-    hasExperience &&
-    hasTotalPoints &&
-    hasAchievements &&
-    hasLoreFragments &&
-    hasVisitedAreas &&
-    hasPuzzlesSolved &&
-    hasGameStarted &&
-    hasClickCount &&
-    hasTimeSpent &&
-    hasSecretsFound
+  if (
+    !hasPlayerName ||
+    !hasLevel ||
+    !hasExperience ||
+    !hasTotalPoints ||
+    !hasGameStarted ||
+    !hasClickCount ||
+    !hasTimeSpent
+  ) {
+    return false
+  }
+
+  const achievementsOk = Array.isArray(loadedState.achievements) && loadedState.achievements.every(
+    (item: any) =>
+      item &&
+      typeof item === "object" &&
+      typeof item.id === "string" &&
+      typeof item.title === "string" &&
+      typeof item.description === "string" &&
+      typeof item.points === "number" &&
+      typeof item.unlocked === "boolean" &&
+      typeof item.icon === "string"
   )
+
+  const loreFragmentsOk = Array.isArray(loadedState.loreFragments) && loadedState.loreFragments.every(
+    (item: any) =>
+      item &&
+      typeof item === "object" &&
+      typeof item.id === "string" &&
+      typeof item.title === "string" &&
+      typeof item.content === "string" &&
+      typeof item.discovered === "boolean" &&
+      typeof item.location === "string"
+  )
+
+  const visitedAreasOk = Array.isArray(loadedState.visitedAreas) && loadedState.visitedAreas.every(
+    (item: any) => typeof item === "string"
+  )
+
+  const puzzlesSolvedOk = Array.isArray(loadedState.puzzlesSolved) && loadedState.puzzlesSolved.every(
+    (item: any) => typeof item === "string"
+  )
+
+  const secretsFoundOk = Array.isArray(loadedState.secretsFound) && loadedState.secretsFound.every(
+    (item: any) => typeof item === "string"
+  )
+
+  return achievementsOk && loreFragmentsOk && visitedAreasOk && puzzlesSolvedOk && secretsFoundOk
 }
 
 interface GameContextType {

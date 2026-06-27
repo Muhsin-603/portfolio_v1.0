@@ -120,11 +120,17 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
 
     const sequenceHintCopy = [...puzzles.sequence.sequence]
     
-    for (let index = sequenceHintCopy.length - 1; index > 0; index--) {
-      const randomIndex = Math.floor(Math.random() * (index + 1))
-      const temporaryValue = sequenceHintCopy[index]
-      sequenceHintCopy[index] = sequenceHintCopy[randomIndex]
-      sequenceHintCopy[randomIndex] = temporaryValue
+    while (true) {
+      for (let index = sequenceHintCopy.length - 1; index > 0; index--) {
+        const randomIndex = Math.floor(Math.random() * (index + 1))
+        const temporaryValue = sequenceHintCopy[index]
+        sequenceHintCopy[index] = sequenceHintCopy[randomIndex]
+        sequenceHintCopy[randomIndex] = temporaryValue
+      }
+      const isCorrectOrder = sequenceHintCopy.every((value, index) => value === puzzles.sequence.sequence[index])
+      if (!isCorrectOrder) {
+        break
+      }
     }
     
     setSequenceHint(sequenceHintCopy)
@@ -219,10 +225,11 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
 
   const handleMemoryClick = (cardId: number) => {
     if (memorySolved || memoryFlippedReference.current.length >= 2) return
-    incrementClick()
 
     const card = memoryCards.find((searchCard) => searchCard.id === cardId)
     if (!card || card.flipped || card.matched) return
+
+    incrementClick()
 
     const newCards = memoryCards.map((existingCard) => (existingCard.id === cardId ? { ...existingCard, flipped: true } : existingCard))
     setMemoryCards(newCards)
