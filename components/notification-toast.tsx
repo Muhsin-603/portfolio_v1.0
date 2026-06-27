@@ -27,12 +27,12 @@ export function NotificationToast() {
   }, [])
 
   useEffect(() => {
-    if (!initializedReference.current) {
+    if (state.isStateLoaded && !initializedReference.current) {
       previousAchievementsReference.current = state.achievements.filter((achievement) => achievement.unlocked).map((achievement) => achievement.id)
       previousLoreReference.current = state.loreFragments.filter((fragment) => fragment.discovered).map((fragment) => fragment.id)
       initializedReference.current = true
     }
-  }, [state.achievements, state.loreFragments])
+  }, [state.isStateLoaded, state.achievements, state.loreFragments])
 
   useEffect(() => {
     if (!initializedReference.current) return

@@ -1,7 +1,7 @@
 "use client"
 
 import { useGame } from "@/lib/game-context"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 
 interface PuzzlePiece {
   id: number
@@ -79,12 +79,15 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
   const [sequenceSolved, setSequenceSolved] = useState(false)
   const [sequenceHint, setSequenceHint] = useState<number[]>([])
   const [showSequenceHint, setShowSequenceHint] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
 
   const [memoryCards, setMemoryCards] = useState<
     Array<{ id: number; value: string; flipped: boolean; matched: boolean }>
   >([])
   const [memoryFlipped, setMemoryFlipped] = useState<number[]>([])
   const [memorySolved, setMemorySolved] = useState(false)
+  const sequenceInputReference = useRef<number[]>([])
+  const memoryFlippedReference = useRef<number[]>([])
 
   useEffect(() => {
     if (state.gameStarted && isActive) {
@@ -93,6 +96,9 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
   }, [state.gameStarted, isActive, visitArea])
 
   useEffect(() => {
+    sequenceInputReference.current = []
+    memoryFlippedReference.current = []
+
     const newParticles = Array.from({ length: 40 }, (_unused, index) => ({
       id: index,
       x: Math.random() * 100,
@@ -102,10 +108,26 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
     setParticles(newParticles)
 
     const pairs = [...puzzles.memory.pairs, ...puzzles.memory.pairs]
-    const shuffled = pairs.sort(() => Math.random() - 0.5)
-    setMemoryCards(shuffled.map((value, index) => ({ id: index, value, flipped: false, matched: false })))
+    
+    for (let index = pairs.length - 1; index > 0; index--) {
+      const randomIndex = Math.floor(Math.random() * (index + 1))
+      const temporaryValue = pairs[index]
+      pairs[index] = pairs[randomIndex]
+      pairs[randomIndex] = temporaryValue
+    }
+    
+    setMemoryCards(pairs.map((value, index) => ({ id: index, value, flipped: false, matched: false })))
 
-    setSequenceHint([...puzzles.sequence.sequence].sort(() => Math.random() - 0.5))
+    const sequenceHintCopy = [...puzzles.sequence.sequence]
+    
+    for (let index = sequenceHintCopy.length - 1; index > 0; index--) {
+      const randomIndex = Math.floor(Math.random() * (index + 1))
+      const temporaryValue = sequenceHintCopy[index]
+      sequenceHintCopy[index] = sequenceHintCopy[randomIndex]
+      sequenceHintCopy[randomIndex] = temporaryValue
+    }
+    
+    setSequenceHint(sequenceHintCopy)
   }, [])
 
   useEffect(() => {
@@ -125,7 +147,10 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
   }, [])
 
   const handlePieceClick = (pieceId: number) => {
-    if (isSolved) return
+    if (isSolved) {
+      return
+    }
+
     incrementClick()
 
     if (selectedPiece === null) {
@@ -134,12 +159,14 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
       const newPuzzle = puzzle.map((piece) => {
         if (piece.id === selectedPiece) {
           const targetPiece = puzzle.find((searchPiece) => searchPiece.id === pieceId)
-          return { ...piece, currentPosition: targetPiece!.currentPosition }
+          return { ...piece, currentPosition: targetPiece ? targetPiece.currentPosition : piece.currentPosition }
         }
+
         if (piece.id === pieceId) {
           const sourcePiece = puzzle.find((searchPiece) => searchPiece.id === selectedPiece)
-          return { ...piece, currentPosition: sourcePiece!.currentPosition }
+          return { ...piece, currentPosition: sourcePiece ? sourcePiece.currentPosition : piece.currentPosition }
         }
+
         return piece
       })
 
@@ -149,7 +176,9 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
       if (checkSolved(newPuzzle)) {
         setIsSolved(true)
         solvePuzzle("word_puzzle")
+
         const puzzleLore = state.loreFragments.find((fragment) => fragment.location === "puzzle" && !fragment.discovered)
+
         if (puzzleLore) {
           discoverLore(puzzleLore.id)
         }
@@ -158,16 +187,27 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
   }
 
   const handleSequenceClick = (number: number) => {
-    if (sequenceSolved) return
+    if (sequenceSolved || isResetting) {
+      return
+    }
+
     incrementClick()
 
-    const newInput = [...sequenceInput, number]
+    const newInput = [...sequenceInputReference.current, number]
+    sequenceInputReference.current = newInput
     setSequenceInput(newInput)
 
     const isCorrect = newInput.every((value, index) => value === puzzles.sequence.sequence[index])
 
     if (!isCorrect) {
-      setTimeout(() => setSequenceInput([]), 500)
+      setIsResetting(true)
+
+      setTimeout(() => {
+        sequenceInputReference.current = []
+        setSequenceInput([])
+        setIsResetting(false)
+      }, 500)
+
       return
     }
 
@@ -178,7 +218,7 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
   }
 
   const handleMemoryClick = (cardId: number) => {
-    if (memorySolved || memoryFlipped.length >= 2) return
+    if (memorySolved || memoryFlippedReference.current.length >= 2) return
     incrementClick()
 
     const card = memoryCards.find((searchCard) => searchCard.id === cardId)
@@ -186,7 +226,8 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
 
     const newCards = memoryCards.map((existingCard) => (existingCard.id === cardId ? { ...existingCard, flipped: true } : existingCard))
     setMemoryCards(newCards)
-    const newFlipped = [...memoryFlipped, cardId]
+    const newFlipped = [...memoryFlippedReference.current, cardId]
+    memoryFlippedReference.current = newFlipped
     setMemoryFlipped(newFlipped)
 
     if (newFlipped.length === 2) {
@@ -196,6 +237,7 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
         setMemoryCards((previousCards) =>
           previousCards.map((existingCard) => (existingCard.id === first.id || existingCard.id === second.id ? { ...existingCard, matched: true } : existingCard)),
         )
+        memoryFlippedReference.current = []
         setMemoryFlipped([])
 
         const allMatched = newCards.every((existingCard) => existingCard.matched || existingCard.id === first.id || existingCard.id === second.id)
@@ -208,6 +250,7 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
           setMemoryCards((previousCards) =>
             previousCards.map((existingCard) => (existingCard.id === first.id || existingCard.id === second.id ? { ...existingCard, flipped: false } : existingCard)),
           )
+          memoryFlippedReference.current = []
           setMemoryFlipped([])
         }, 1000)
       }
@@ -336,11 +379,11 @@ export function PuzzleRoom({ isActive }: PuzzleRoomProps) {
               <button
                 key={number}
                 onClick={() => handleSequenceClick(number)}
-                disabled={sequenceSolved}
+                disabled={sequenceSolved || isResetting}
                 className={`aspect-square flex items-center justify-center border-2 rounded-lg transition-all duration-300
                   ${sequenceInput.includes(number) ? "border-accent bg-accent/30" : "border-accent/30 bg-secondary/50"}
                   ${sequenceSolved ? "border-green-400 bg-green-400/20" : ""}
-                  ${!sequenceSolved ? "hover:border-accent hover:scale-105 cursor-pointer" : ""}
+                  ${!sequenceSolved && !isResetting ? "hover:border-accent hover:scale-105 cursor-pointer" : ""}
                 `}
               >
                 <span className={`text-2xl font-bold ${sequenceSolved ? "text-green-400" : "text-foreground"}`}>

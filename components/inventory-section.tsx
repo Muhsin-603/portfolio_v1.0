@@ -12,6 +12,8 @@ interface Project {
   status: "completed" | "in-progress" | "planned"
   rarity: "common" | "rare" | "epic" | "legendary"
   year: string
+  projectUrl?: string
+  sourceUrl?: string
 }
 
 const projects: Project[] = [
@@ -24,6 +26,8 @@ const projects: Project[] = [
     status: "in-progress",
     rarity: "rare",
     year: "2024",
+    projectUrl: "https://github.com/Muhsin-603/travel-tribe",
+    sourceUrl: "https://github.com/Muhsin-603/travel-tribe",
   },
   {
     id: "2",
@@ -34,6 +38,8 @@ const projects: Project[] = [
     status: "completed",
     rarity: "epic",
     year: "2025",
+    projectUrl: "https://github.com/Muhsin-603/gyro-aid",
+    sourceUrl: "https://github.com/Muhsin-603/gyro-aid",
   },
   {
     id: "3",
@@ -44,6 +50,8 @@ const projects: Project[] = [
     status: "completed",
     rarity: "common",
     year: "2025",
+    projectUrl: "https://github.com/Muhsin-603/techy-pookalam",
+    sourceUrl: "https://github.com/Muhsin-603/techy-pookalam",
   },
   {
     id: "4",
@@ -54,6 +62,8 @@ const projects: Project[] = [
     status: "in-progress",
     rarity: "epic",
     year: "2025",
+    projectUrl: "https://github.com/Muhsin-603/lullaby-down-below",
+    sourceUrl: "https://github.com/Muhsin-603/lullaby-down-below",
   },
   {
     id: "5",
@@ -64,6 +74,8 @@ const projects: Project[] = [
     status: "in-progress",
     rarity: "rare",
     year: "2025",
+    projectUrl: "https://github.com/Muhsin-603/code-sanitizer",
+    sourceUrl: "https://github.com/Muhsin-603/code-sanitizer",
   },
 ]
 
@@ -218,12 +230,22 @@ export function InventorySection({ isActive }: InventorySectionProps) {
             </div>
 
             <div className="flex gap-3">
-              <button className="flex-1 py-2 bg-accent text-secondary text-sm hover:bg-accent/80 transition-colors">
+              <a
+                href={selectedProject.projectUrl || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-2 bg-accent text-secondary text-sm hover:bg-accent/80 transition-colors text-center font-bold"
+              >
                 View Project
-              </button>
-              <button className="flex-1 py-2 border border-accent text-foreground text-sm hover:bg-accent/20 transition-colors">
+              </a>
+              <a
+                href={selectedProject.sourceUrl || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-2 border border-accent text-foreground text-sm hover:bg-accent/20 transition-colors text-center font-bold"
+              >
                 Source Code
-              </button>
+              </a>
             </div>
           </div>
         </div>

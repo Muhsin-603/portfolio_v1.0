@@ -66,9 +66,12 @@ export function SpawnSection({ isActive }: SpawnSectionProps) {
           </div>
         </div>
 
-        <div className="relative mx-auto w-48 h-48 mb-8">
-          <div className="absolute inset-0 border-2 border-accent/30 rotate-45 transform scale-75" />
-          <div className="absolute inset-4 border border-accent/50 z-20" />
+        <button
+          onClick={handleLoreClick}
+          className="relative mx-auto w-48 h-48 mb-8 cursor-pointer block group text-left outline-none"
+        >
+          <div className="absolute inset-0 border-2 border-accent/30 rotate-45 transform scale-75 transition-transform duration-300 group-hover:scale-80" />
+          <div className="absolute inset-4 border border-accent/50 z-20 group-hover:border-accent transition-colors duration-300" />
 
           <div className="absolute inset-0 flex items-center justify-center z-10 overflow-hidden">
             <div className="w-32 h-32 relative">
@@ -77,7 +80,7 @@ export function SpawnSection({ isActive }: SpawnSectionProps) {
                 alt="Drac - Game Developer"
                 fill
                 draggable={false}
-                className="object-cover grayscale hover:grayscale-0 transition-all duration-500 pointer-events-none"
+                className="object-cover grayscale hover:grayscale-0 group-hover:scale-105 transition-all duration-500 pointer-events-none"
               />
             </div>
           </div>
@@ -86,7 +89,7 @@ export function SpawnSection({ isActive }: SpawnSectionProps) {
           <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-accent" />
           <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-accent" />
           <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-accent" />
-        </div>
+        </button>
 
         <p className="text-foreground/80 text-lg max-w-xl mx-auto leading-relaxed mb-8">
           Crafting immersive gaming experiences through code.

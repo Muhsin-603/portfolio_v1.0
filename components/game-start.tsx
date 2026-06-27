@@ -58,7 +58,7 @@ export function GameStart() {
         }`}
       >
         <div className="mb-12">
-          <h1 className="text-7xl md:text-9xl text-foreground mb-4 tracking-wider font-heading">GoStark</h1>
+          <h1 className="text-7xl md:text-9xl text-foreground mb-4 tracking-wider font-heading">Muhsin P</h1>
           <p className="text-accent text-2xl tracking-[0.5em] font-light">PORTFOLIO QUEST</p>
         </div>
 

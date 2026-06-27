@@ -28,7 +28,7 @@ export function GameNavigation({ currentSection, onNavigate, isHudHidden }: Game
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <button onClick={() => onNavigate("spawn")} className="hidden md:flex items-center gap-2 group">
           <div className="text-foreground text-xl tracking-wider group-hover:text-accent transition-colors">
-            GoStark
+            Muhsin P
           </div>
         </button>
 

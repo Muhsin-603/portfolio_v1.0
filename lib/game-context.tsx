@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useReducer, useEffect, useMemo, useCallback, type ReactNode } from "react"
+import { createContext, useContext, useReducer, useEffect, useMemo, useCallback, useRef, type ReactNode } from "react"
 
 export interface Achievement {
   id: string
@@ -32,6 +32,7 @@ export interface GameState {
   clickCount: number
   timeSpent: number
   secretsFound: string[]
+  isStateLoaded?: boolean
 }
 
 const initialAchievements: Achievement[] = [
@@ -206,16 +207,18 @@ const initialState: GameState = {
   clickCount: 0,
   timeSpent: 0,
   secretsFound: [],
+  isStateLoaded: false,
 }
 
 type GameAction =
-  | { type: "START_GAME"; playerName: string }
-  | { type: "VISIT_AREA"; area: string }
+  | { type: "START_GAME"; playerName: string; timestamp: number }
+  | { type: "VISIT_AREA"; area: string; timestamp: number }
   | { type: "UNLOCK_ACHIEVEMENT"; id: string }
   | { type: "DISCOVER_LORE"; id: string }
   | { type: "SOLVE_PUZZLE"; id: string }
   | { type: "ADD_EXPERIENCE"; amount: number }
   | { type: "LOAD_STATE"; state: GameState }
+  | { type: "SET_STATE_LOADED" }
   | { type: "RESET_GAME" }
   | { type: "INCREMENT_CLICK" }
   | { type: "UPDATE_TIME"; time: number }
@@ -232,7 +235,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         playerName: action.playerName,
         gameStarted: true,
-        timeSpent: Date.now(),
+        timeSpent: action.timestamp,
       }
 
       const achievements = newState.achievements.map((achievement) =>
@@ -267,7 +270,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       }
 
       if (visitedAreas.length >= 5 && state.timeSpent > 0) {
-        const elapsed = (Date.now() - state.timeSpent) / 1000
+        const elapsed = (action.timestamp - state.timeSpent) / 1000
         if (elapsed < 60) {
           achievements = achievements.map((achievement) =>
             achievement.id === "speed_runner" && !achievement.unlocked ? { ...achievement, unlocked: true } : achievement,
@@ -455,17 +458,51 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       }
 
     case "LOAD_STATE":
-      return action.state
+      return { ...action.state, isStateLoaded: true }
+
+    case "SET_STATE_LOADED":
+      return { ...state, isStateLoaded: true }
 
     case "RESET_GAME":
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("portfolio-game-state")
-      }
       return { ...initialState }
 
     default:
       return state
   }
+}
+
+function isValidGameState(loadedState: any): loadedState is GameState {
+  if (!loadedState || typeof loadedState !== "object") {
+    return false
+  }
+
+  const hasPlayerName = typeof loadedState.playerName === "string"
+  const hasLevel = typeof loadedState.level === "number"
+  const hasExperience = typeof loadedState.experience === "number"
+  const hasTotalPoints = typeof loadedState.totalPoints === "number"
+  const hasAchievements = Array.isArray(loadedState.achievements)
+  const hasLoreFragments = Array.isArray(loadedState.loreFragments)
+  const hasVisitedAreas = Array.isArray(loadedState.visitedAreas)
+  const hasPuzzlesSolved = Array.isArray(loadedState.puzzlesSolved)
+  const hasGameStarted = typeof loadedState.gameStarted === "boolean"
+  const hasClickCount = typeof loadedState.clickCount === "number"
+  const hasTimeSpent = typeof loadedState.timeSpent === "number"
+  const hasSecretsFound = Array.isArray(loadedState.secretsFound)
+
+  return (
+    hasPlayerName &&
+    hasLevel &&
+    hasExperience &&
+    hasTotalPoints &&
+    hasAchievements &&
+    hasLoreFragments &&
+    hasVisitedAreas &&
+    hasPuzzlesSolved &&
+    hasGameStarted &&
+    hasClickCount &&
+    hasTimeSpent &&
+    hasSecretsFound
+  )
 }
 
 interface GameContextType {
@@ -486,39 +523,64 @@ const GameContext = createContext<GameContextType | null>(null)
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(gameReducer, initialState)
 
+  const achievementsReference = useRef(state.achievements)
+
+  useEffect(() => {
+    achievementsReference.current = state.achievements
+  }, [state.achievements])
+
   useEffect(() => {
     const saved = localStorage.getItem("portfolio-game-state")
+
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
-        dispatch({ type: "LOAD_STATE", state: parsed })
+
+        if (isValidGameState(parsed)) {
+          dispatch({ type: "LOAD_STATE", state: parsed })
+        } else {
+          dispatch({ type: "SET_STATE_LOADED" })
+        }
       } catch (error) {
         console.error("Failed to load game state")
+        dispatch({ type: "SET_STATE_LOADED" })
       }
+    } else {
+      dispatch({ type: "SET_STATE_LOADED" })
     }
   }, [])
 
   useEffect(() => {
-    if (state.gameStarted) {
-      localStorage.setItem("portfolio-game-state", JSON.stringify(state))
+    if (!state.gameStarted) {
+      return
     }
+
+    const handler = setTimeout(() => {
+      localStorage.setItem("portfolio-game-state", JSON.stringify(state))
+    }, 1000)
+
+    return () => clearTimeout(handler)
   }, [state])
 
   useEffect(() => {
-    if (!state.gameStarted) return
+    if (!state.gameStarted) {
+      return
+    }
 
     const interval = setInterval(() => {
       const elapsed = (Date.now() - state.timeSpent) / 1000
-      if (elapsed >= 300 && !state.achievements.find((achievement) => achievement.id === "dedicated")?.unlocked) {
+      const hasDedicatedUnlocked = achievementsReference.current.find((achievement) => achievement.id === "dedicated")?.unlocked
+
+      if (elapsed >= 300 && !hasDedicatedUnlocked) {
         dispatch({ type: "UNLOCK_ACHIEVEMENT", id: "dedicated" })
       }
     }, 10000)
 
     return () => clearInterval(interval)
-  }, [state.gameStarted, state.timeSpent, state.achievements])
+  }, [state.gameStarted, state.timeSpent])
 
-  const startGame = useCallback((name: string) => dispatch({ type: "START_GAME", playerName: name }), [])
-  const visitArea = useCallback((area: string) => dispatch({ type: "VISIT_AREA", area }), [])
+  const startGame = useCallback((name: string) => dispatch({ type: "START_GAME", playerName: name, timestamp: Date.now() }), [])
+  const visitArea = useCallback((area: string) => dispatch({ type: "VISIT_AREA", area, timestamp: Date.now() }), [])
   const unlockAchievement = useCallback((id: string) => dispatch({ type: "UNLOCK_ACHIEVEMENT", id }), [])
   const discoverLore = useCallback((id: string) => dispatch({ type: "DISCOVER_LORE", id }), [])
   const solvePuzzle = useCallback((id: string) => dispatch({ type: "SOLVE_PUZZLE", id }), [])

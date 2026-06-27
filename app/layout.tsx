@@ -6,7 +6,7 @@ import { SmoothScrollProvider } from "@/components/smooth-scroll-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "GoStark - Portfolio Quest",
+  title: "Muhsin P - Portfolio Quest",
   description: "A game developer's portfolio - an interactive journey through projects, skills, and achievements",
   generator: "v0.app",
   icons: {
